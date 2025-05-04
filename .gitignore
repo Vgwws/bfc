@@ -1,0 +1,12 @@
+*.swp
+*.o
+*.s
+*.so
+*.a
+*.tmp
+*.log
+*.txt
+*~
+ebfc*
+build/
+core
