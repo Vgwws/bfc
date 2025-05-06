@@ -20,27 +20,58 @@ void lexer_advance(Lexer* lexer, const char* source){
 		return;
 	}
 	lexer->token.count = 0;
-	while(lexer->current_char == ch){
-		lexer->current_char = source[++lexer->index];
-		lexer->token.count++;
-		if(ch == '[' || ch == ']' || ch == ',' || ch == '.'){
-			break;
+	int net = 0;
+	short is_ptr_op = 0;
+	short is_val_op = 0;
+	char f_op = 0;
+	char s_op = 0;
+	if(ch == '+' || ch == '-'){
+		is_val_op = 1;
+		f_op = '+';
+		s_op = '-';
+	}
+	else if(ch == '>' || ch == '<'){
+		is_ptr_op = 1;
+		f_op = '>';
+		s_op = '<';
+	}
+	while((lexer->current_char == f_op || lexer->current_char == s_op) &&
+			(is_val_op || is_ptr_op)){
+		if(lexer->current_char == '+' || lexer->current_char == '>'){
+			net++;
 		}
+		else{
+			net--;
+		}
+		lexer->current_char = source[++lexer->index];
 	}
 	int is_valid_token = 1;
+	if(is_ptr_op || is_val_op){
+		if(net < 0){
+			lexer->token.count = -net;
+			if(is_ptr_op){
+				lexer->token.type = TOKEN_PTR_DEC;
+			}
+			else{
+				lexer->token.type = TOKEN_VAL_DEC;
+			}
+		}
+		else if(net > 0){
+			lexer->token.count = net;
+			if(is_ptr_op){
+				lexer->token.type = TOKEN_PTR_INC;
+			}
+			else{
+				lexer->token.type = TOKEN_VAL_INC;
+			}
+		}
+		else{
+			lexer_advance(lexer, source);
+		}
+		return;
+	}
+	lexer->current_char = source[++lexer->index];
 	switch(ch){
-		case '+':
-			lexer->token.type = TOKEN_VAL_INC;
-			break;
-		case '-':
-			lexer->token.type = TOKEN_VAL_DEC;
-			break;
-		case '>':
-			lexer->token.type = TOKEN_PTR_INC;
-			break;
-		case '<':
-			lexer->token.type = TOKEN_PTR_DEC;
-			break;
 		case ',':
 			lexer->token.type = TOKEN_INPUT;
 			break;

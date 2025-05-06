@@ -19,7 +19,7 @@ INSTALL_HEADERS := $(wildcard include/*.h)
 INSTALL_TARGETS := $(patsubst include/%, $(INCLUDEDIR)/%, $(INSTALL_HEADERS)) $(BINDIR)/bfc
 
 %: test/%.bf
-	./bfc -o $@ $<
+	./bfc-debug -o $@ $<
 	@echo "Output of $@:"
 	@./$@
 	@echo "\n-----------"
@@ -31,11 +31,11 @@ build/std/%.o: src/%.c
 
 build/debug/%.o: src/%.c
 	mkdir -p $(dir $@)
-	gcc -c $< -o $@ $(CFLAGS) -O0
+	gcc -g -c $< -o $@ $(CFLAGS) -O0
 
 build/asan-debug/%.o: src/%.c
 	mkdir -p $(dir $@)
-	clang -fsanitize=address -c $< -o $@ $(CFLAGS) -O0
+	clang -fsanitize=address -g -c $< -o $@ $(CFLAGS) -O0
 
 $(INCLUDEDIR)/%.h: include/%.h
 	@mkdir -p $(dir $@)
@@ -53,12 +53,12 @@ std: $(STD_OBJ)
 	gcc $(STD_OBJ) -o bfc
 
 debug: $(DEBUG_OBJ)
-	gcc $(DEBUG_OBJ) -o bfc-debug
+	gcc -g $(DEBUG_OBJ) -o bfc-debug
 
 asan-debug: $(ASAN_OBJ)
-	clang -fsanitize=address $(ASAN_OBJ) -o bfc-asan-debug
+	clang -fsanitize=address -g $(ASAN_OBJ) -o bfc-asan-debug
 
-test: std $(EXEC)
+test: debug $(EXEC)
 
 clean:
 	rm -f $(STD_OBJ)
@@ -66,7 +66,7 @@ clean:
 	rm -f $(ASAN_OBJ)
 	rm -f $(BFC_VARIANTS)
 
-install: $(INSTALL_TARGETS)
+install: uninstall $(INSTALL_TARGETS)
 
 uninstall:
 	rm -f $(BINDIR)/bfc
