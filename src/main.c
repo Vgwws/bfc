@@ -119,7 +119,7 @@ int main(int argc, char** argv){
 	fclose(file);
 	if(output_assembly){
 		clean_up(assembly, ast, parser, tokens, lexer);
-		return 1;
+		return 0;
 	}
 	pid_t pid = fork();
 	if(pid == -1){

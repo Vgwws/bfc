@@ -1,13 +1,13 @@
-.PHONY: all std debug test asan-debug object-compile clean install uninstall
+.PHONY: all std debug test-exec test-asm clean install uninstall
 
 CFLAGS := -I include -Wall -Wextra -Werror -std=gnu99
 
 C_SRC := $(wildcard src/*.c)
 STD_OBJ := $(C_SRC:src/%.c=build/std/%.o)
 DEBUG_OBJ := $(C_SRC:src/%.c=build/debug/%.o)
-ASAN_OBJ := $(C_SRC:src/%.c=build/asan-debug/%.o)
 BF_SRC := $(wildcard test/*.bf)
 EXEC := $(BF_SRC:test/%.bf=%)
+ASM := $(BF_SRC:test/%.bf=%.s)
 BFC_VARIANTS := $(wildcard bfc*)
 
 PREFIX ?= /usr/local
@@ -25,6 +25,13 @@ INSTALL_TARGETS := $(patsubst include/%, $(INCLUDEDIR)/%, $(INSTALL_HEADERS)) $(
 	@echo "\n-----------"
 	rm $@
 
+%.s: test/%.bf
+	./bfc-debug -S $@ $<
+	@echo "Assembly of $@:"
+	@cat $@
+	@echo "\n-------"
+	rm $@
+
 build/std/%.o: src/%.c
 	mkdir -p $(dir $@)
 	gcc -c $< -o $@ $(CFLAGS) -O2
@@ -32,10 +39,6 @@ build/std/%.o: src/%.c
 build/debug/%.o: src/%.c
 	mkdir -p $(dir $@)
 	gcc -g -c $< -o $@ $(CFLAGS) -O0
-
-build/asan-debug/%.o: src/%.c
-	mkdir -p $(dir $@)
-	clang -fsanitize=address -g -c $< -o $@ $(CFLAGS) -O0
 
 $(INCLUDEDIR)/%.h: include/%.h
 	@mkdir -p $(dir $@)
@@ -55,11 +58,9 @@ std: $(STD_OBJ)
 debug: $(DEBUG_OBJ)
 	gcc -g $(DEBUG_OBJ) -o bfc-debug
 
-asan-debug: $(ASAN_OBJ)
-	clang -fsanitize=address -g $(ASAN_OBJ) -o bfc-asan-debug
+test-exec: debug $(EXEC)
 
-test: debug $(EXEC)
-
+test-asm: debug $(ASM)
 clean:
 	rm -f $(STD_OBJ)
 	rm -f $(DEBUG_OBJ)
