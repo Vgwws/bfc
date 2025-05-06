@@ -104,7 +104,6 @@ char* generate_asm_aarch64(
 		case AST_LOOP:
 			*depth += 1;
 			unsigned int preserve_depth = *depth;
-			*depth += 1;
 			assembly = realloc_new_assembly(assembly, assembly_size, start_loop);
 			if(!assembly) return NULL;
 			indew += snprintf(assembly + indew, *assembly_size,
