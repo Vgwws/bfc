@@ -19,3 +19,6 @@ jobs:
 
     - name: Compile it
       run: make std
+
+    - name: Test it
+      run: make test
