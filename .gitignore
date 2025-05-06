@@ -3,6 +3,9 @@
 *.s
 *.so
 *.a
+*.out
+*.exe
+*.dmg
 *.tmp
 *.log
 *.txt

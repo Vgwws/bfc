@@ -23,6 +23,12 @@ Parser* parser_init(const Token* tokens){
 AST* parse_program(Parser* parser, const Token* tokens){
 	AST* ast = parse_commands(parser, tokens);
 	if(!ast) return NULL;
+	if(parser->current_token.type == TOKEN_CLOSE_LOOP){
+		fprintf(stderr, "ERROR: Unexpected ]\n");
+		parser->error_flag = 1;
+		clean_ast(ast);
+		return NULL;
+	}
 	ast->node.type = AST_PROGRAM;
 	return ast;
 }
@@ -68,7 +74,6 @@ AST* parse_commands(Parser* parser, const Token* tokens){
 }
 
 AST* parse_command(Parser* parser, const Token* tokens){
-	printf("%d\n", parser->current_token.type);
 	if(parser->current_token.type == TOKEN_OPEN_LOOP){
 		parser->current_token = tokens[++parser->index];
 		AST* ast = parse_commands(parser, tokens);
