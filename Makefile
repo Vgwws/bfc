@@ -8,11 +8,15 @@ DEBUG_OBJ := $(C_SRC:src/%.c=build/debug/%.o)
 ASAN_OBJ := $(C_SRC:src/%.c=build/asan-debug/%.o)
 BF_SRC := $(wildcard test/*.bf)
 EXEC := $(BF_SRC:test/%.bf=%)
+BFC_VARIANTS := $(wildcard bfc*)
 
 PREFIX ?= /usr/local
 
 BINDIR := $(PREFIX)/bin
 INCLUDEDIR := $(PREFIX)/include
+
+INSTALL_HEADERS := $(wildcard include/*.h)
+INSTALL_TARGETS := $(patsubst include/%, $(INCLUDEDIR)/%, $(INSTALL_HEADERS)) $(BINDIR)/bfc
 
 %: test/%.bf
 	./bfc -o $@ $<
@@ -33,6 +37,16 @@ build/asan-debug/%.o: src/%.c
 	mkdir -p $(dir $@)
 	clang -fsanitize=address -c $< -o $@ $(CFLAGS) -O0
 
+$(INCLUDEDIR)/%.h: include/%.h
+	@mkdir -p $(dir $@)
+	cp $< $@
+	chmod 644 $@
+
+$(BINDIR)/bfc: bfc
+	@mkdir -p $(dir $@)
+	cp $< $@
+	chmod 755 $@
+
 all: std debug
 
 std: $(STD_OBJ)
@@ -50,17 +64,10 @@ clean:
 	rm -f $(STD_OBJ)
 	rm -f $(DEBUG_OBJ)
 	rm -f $(ASAN_OBJ)
-	rm -f bfc*
+	rm -f $(BFC_VARIANTS)
 
-install:
-	mkdir -p $(INCLUDEDIR)
-	mkdir -p $(BINDIR)
-	chmod 755 bfc
-	chmod 644 include/*.h
-	cp bfc $(BINDIR)
-	cp include/* $(INCLUDEDIR)
-	@echo "Installation done"
+install: $(INSTALL_TARGETS)
 
 uninstall:
 	rm -f $(BINDIR)/bfc
-	rm -f $(INCLUDEDIR)/bfc*.h
+	rm -f $(patsubst include/%, $(INCLUDEDIR)/%, $(INSTALL_HEADERS))

@@ -25,6 +25,8 @@ Build it
 make std
 # Debug version
 make debug
+# ASan Debug version(Install Clang first)
+make asan-debug
 # Both version(You can also omit all)
 make all
 ```
