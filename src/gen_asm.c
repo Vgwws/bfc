@@ -12,7 +12,7 @@ static inline char* realloc_new_assembly(
 		return assembly;
 	}
 	*assembly_size += strlen(template_assembly);
-	char* new_assembly = realloc(assembly, *assembly_size * sizeof(char));
+	char* new_assembly = realloc(assembly, *assembly_size);
 	if(!new_assembly){
 		fprintf(stderr, "ERROR: Memory allocation for assembly failed\n");
 		free(assembly);
@@ -78,7 +78,7 @@ char* generate_asm_aarch64(
 		"  mov x8, 64\n"
 		"  svc 0\n"
 		;
-	char* assembly = malloc(*assembly_size * sizeof(char));
+	char* assembly = malloc(*assembly_size);
 	if(!assembly){
 		fprintf(stderr, "ERROR: Memory allocation for assembly failed\n");
 		return NULL;

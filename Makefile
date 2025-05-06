@@ -33,11 +33,11 @@ INSTALL_TARGETS := $(patsubst include/%, $(INCLUDEDIR)/%, $(INSTALL_HEADERS)) $(
 	rm $@
 
 build/std/%.o: src/%.c
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	gcc -c $< -o $@ $(CFLAGS) -O2
 
 build/debug/%.o: src/%.c
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	gcc -g -c $< -o $@ $(CFLAGS) -O0
 
 $(INCLUDEDIR)/%.h: include/%.h
@@ -54,6 +54,7 @@ all: std debug
 
 std: $(STD_OBJ)
 	gcc $(STD_OBJ) -o bfc
+	@strip bfc
 
 debug: $(DEBUG_OBJ)
 	gcc -g $(DEBUG_OBJ) -o bfc-debug
