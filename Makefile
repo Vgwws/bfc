@@ -1,6 +1,6 @@
 .PHONY: all std debug test asan-debug object-compile clean install uninstall
 
-CFLAGS := -I include -Wall -Wextra -Werror -std=c99
+CFLAGS := -I include -Wall -Wextra -Werror -std=gnu99
 
 C_SRC := $(wildcard src/*.c)
 STD_OBJ := $(C_SRC:src/%.c=build/std/%.o)

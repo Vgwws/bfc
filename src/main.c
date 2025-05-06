@@ -1,3 +1,5 @@
+/* This source code is licensed under MIT License */
+
 #include <unistd.h>
 #include <sys/wait.h>
 #include <stdio.h>
@@ -11,8 +13,8 @@
 #define TOKENS_SIZE 100
 
 static inline void clean_up(
-		char* asm, AST* ast, Parser* parser, Token* tokens, Lexer* lexer){
-	free(asm);
+		char* assembly, AST* ast, Parser* parser, Token* tokens, Lexer* lexer){
+	free(assembly);
 	clean_ast(ast);
 	free(parser);
 	free(tokens);
@@ -34,7 +36,13 @@ char* read_file(const char* filename){
 		fclose(file);
 		return NULL;
 	}
-	fread(buffer, 1, length, file);
+	size_t bytes = fread(buffer, 1, length, file);
+	if((long)bytes != length){
+		fprintf(stderr, "ERROR: Can't fully read files\n");
+		fclose(file);
+		free(buffer);
+		return NULL;
+	}
 	buffer[length] = '\0';
 	return buffer;
 }
@@ -91,27 +99,27 @@ int main(int argc, char** argv){
 		free(lexer);
 		return 1;
 	}
-	unsigned int asm_size = ASM_SIZE;
+	unsigned int assembly_size = ASM_SIZE;
 	unsigned int index = 0;
-	char* asm = generate_asm_aarch64(ast, &asm_size, &index);
+	char* assembly = generate_asm_aarch64(ast, &assembly_size, &index);
 	FILE* file = fopen("progTEMP.s", "w");
 	if(!file){
 		fprintf(stderr, "ERROR: Can't open file\n");
-		clean_up(asm, ast, parser, tokens, lexer);
+		clean_up(assembly, ast, parser, tokens, lexer);
 		return 1;
 	}
-	fwrite(asm, 1, strlen(asm), file);
+	fwrite(assembly, 1, strlen(assembly), file);
 	fclose(file);
 	pid_t pid = fork();
 	if(pid == -1){
 		fprintf(stderr, "ERROR: Fork failed\n");
-		clean_up(asm, ast, parser, tokens, lexer);
+		clean_up(assembly, ast, parser, tokens, lexer);
 		return 1;
 	}
 	else if(pid == 0){
 		execlp("as", "as", "-o", "progTEMP.o", "progTEMP.s", NULL);
 		fprintf(stderr, "ERROR: Can't run subprocess\n");
-		clean_up(asm, ast, parser, tokens, lexer);
+		clean_up(assembly, ast, parser, tokens, lexer);
 		return 1;
 	}
 	else{
@@ -120,13 +128,13 @@ int main(int argc, char** argv){
 	}
 	if(remove("progTEMP.s") != 0){
 		fprintf(stderr, "ERROR: Can't remove temporary files\n");
-		clean_up(asm, ast, parser, tokens, lexer);
+		clean_up(assembly, ast, parser, tokens, lexer);
 		return 1;
 	}
 	pid = fork();
 	if(pid == -1){
 		fprintf(stderr, "ERROR: Fork failed\n");
-		clean_up(asm, ast, parser, tokens, lexer);
+		clean_up(assembly, ast, parser, tokens, lexer);
 		return 1;
 	}
 	else if(pid == 0){
@@ -140,9 +148,9 @@ int main(int argc, char** argv){
 	}
 	if(remove("progTEMP.o") != 0){
 		fprintf(stderr, "ERROR: Can't remove temporary files\n");
-		clean_up(asm, ast, parser, tokens, lexer);
+		clean_up(assembly, ast, parser, tokens, lexer);
 		return 1;
 	}
-	clean_up(asm, ast, parser, tokens, lexer);
+	clean_up(assembly, ast, parser, tokens, lexer);
 	return 0;
 }
