@@ -78,12 +78,12 @@ char* generate_asm_aarch64(
 		"  mov x8, 64\n"
 		"  svc 0\n"
 		;
-	char* assembly = NULL;
-	assembly = malloc(*assembly_size * sizeof(char));
+	char* assembly = malloc(*assembly_size * sizeof(char));
 	if(!assembly){
 		fprintf(stderr, "ERROR: Memory allocation for assembly failed\n");
 		return NULL;
 	}
+	assembly[0] = '\0';
 	unsigned int indew = 0;
 	switch(ast->node.type){
 		case AST_PROGRAM:
