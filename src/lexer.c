@@ -1,3 +1,5 @@
+/* This source code is licensed under MIT License */
+
 #include <stdio.h>
 #include <stdlib.h>
 
