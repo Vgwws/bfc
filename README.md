@@ -27,8 +27,6 @@ make std
 make debug
 # Both version
 make all
-# ASan Debug version(Install Clang first)
-make asan-debug
 ```
 If you want to clean the compiled files
 ```sh
