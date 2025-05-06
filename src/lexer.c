@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ebfc_lexer.h"
+#include "bfc_lexer.h"
 
 Lexer* lexer_init(const char* source){
 	Lexer* lexer = malloc(sizeof(Lexer));

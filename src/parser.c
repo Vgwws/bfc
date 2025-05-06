@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ebfc_parser.h"
-#include "ebfc_lexer.h"
+#include "bfc_parser.h"
+#include "bfc_lexer.h"
 
 #define CHILDS_SIZE 10
 

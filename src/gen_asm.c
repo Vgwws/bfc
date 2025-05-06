@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ebfc_asm.h"
+#include "bfc_asm.h"
 
 static inline char* realloc_new_assembly(
 		char* assembly, unsigned int* assembly_size, const char* template_assembly){

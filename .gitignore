@@ -10,6 +10,6 @@
 *.log
 *.txt
 *~
-ebfc*
+bfc*
 build/
 core

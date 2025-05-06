@@ -7,28 +7,18 @@ STD_OBJ := $(C_SRC:src/%.c=build/std/%.o)
 DEBUG_OBJ := $(C_SRC:src/%.c=build/debug/%.o)
 ASAN_OBJ := $(C_SRC:src/%.c=build/asan-debug/%.o)
 BF_SRC := $(wildcard test/*.bf)
-ASM := $(BF_SRC:test/%.bf=%.s)
-OBJ := $(ASM:%.s=%.o)
-EXEC := $(OBJ:%.o=%)
+EXEC := $(BF_SRC:test/%.bf=%)
 
 PREFIX ?= /usr/local
 
 BINDIR := $(PREFIX)/bin
 INCLUDEDIR := $(PREFIX)/include
 
-%.s: test/%.bf ebfc
-	./ebfc -o $@ $<
-
-%.o: %.s
-	as -o $@ $<
-	rm $<
-
-%: %.o
-	ld -o $@ $<
+%: test/%.bf
+	./bfc -o $@ $<
 	@echo "Output of $@:"
 	@./$@
-	@echo "\n-------"
-	rm $<
+	@echo "\n-----------"
 	rm $@
 
 build/std/%.o: src/%.c
@@ -43,16 +33,16 @@ build/asan-debug/%.o: src/%.c
 	mkdir -p $(dir $@)
 	clang -fsanitize=address -c $< -o $@ $(CFLAGS) -O0
 
-all: std debug test
+all: std debug
 
 std: $(STD_OBJ)
-	gcc $(STD_OBJ) -o ebfc
+	gcc $(STD_OBJ) -o bfc
 
 debug: $(DEBUG_OBJ)
-	gcc $(DEBUG_OBJ) -o ebfc-debug
+	gcc $(DEBUG_OBJ) -o bfc-debug
 
 asan-debug: $(ASAN_OBJ)
-	clang -fsanitize=address $(ASAN_OBJ) -o ebfc-asan-debug
+	clang -fsanitize=address $(ASAN_OBJ) -o bfc-asan-debug
 
 test: std $(EXEC)
 
@@ -60,17 +50,17 @@ clean:
 	rm -f $(STD_OBJ)
 	rm -f $(DEBUG_OBJ)
 	rm -f $(ASAN_OBJ)
-	rm -f ebfc*
+	rm -f bfc*
 
 install:
 	mkdir -p $(INCLUDEDIR)
 	mkdir -p $(BINDIR)
-	chmod 755 ebfc
+	chmod 755 bfc
 	chmod 644 include/*.h
-	cp ebfc $(BINDIR)
+	cp bfc $(BINDIR)
 	cp include/* $(INCLUDEDIR)
 	@echo "Installation done"
 
 uninstall:
-	rm -f $(BINDIR)/ebfc
-	rm -f $(INCLUDEDIR)/ebfc*.h
+	rm -f $(BINDIR)/bfc
+	rm -f $(INCLUDEDIR)/bfc*.h

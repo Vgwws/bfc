@@ -1,13 +1,23 @@
 #include <unistd.h>
+#include <sys/wait.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "ebfc_lexer.h"
-#include "ebfc_parser.h"
-#include "ebfc_asm.h"
+#include "bfc_lexer.h"
+#include "bfc_parser.h"
+#include "bfc_asm.h"
 
 #define TOKENS_SIZE 100
+
+static inline void clean_up(
+		char* asm, AST* ast, Parser* parser, Token* tokens, Lexer* lexer){
+	free(asm);
+	clean_ast(ast);
+	free(parser);
+	free(tokens);
+	free(lexer);
+}
 
 char* read_file(const char* filename){
 	FILE* file = fopen(filename, "r");
@@ -30,7 +40,7 @@ char* read_file(const char* filename){
 }
 
 int main(int argc, char** argv){
-	char* output = "a.s";
+	char* output = "a.out";
 	char* input = NULL;
 	int opt;
 	while((opt = getopt(argc, argv, "ho:")) != -1){
@@ -84,22 +94,55 @@ int main(int argc, char** argv){
 	unsigned int asm_size = ASM_SIZE;
 	unsigned int index = 0;
 	char* asm = generate_asm_aarch64(ast, &asm_size, &index);
-	FILE* file = fopen(output, "w");
+	FILE* file = fopen("progTEMP.s", "w");
 	if(!file){
 		fprintf(stderr, "ERROR: Can't open file\n");
-		free(asm);
-		clean_ast(ast);
-		free(parser);
-		free(tokens);
-		free(lexer);
+		clean_up(asm, ast, parser, tokens, lexer);
 		return 1;
 	}
 	fwrite(asm, 1, strlen(asm), file);
 	fclose(file);
-	free(asm);
-	clean_ast(ast);
-	free(tokens);
-	free(parser);
-	free(lexer);
+	pid_t pid = fork();
+	if(pid == -1){
+		fprintf(stderr, "ERROR: Fork failed\n");
+		clean_up(asm, ast, parser, tokens, lexer);
+		return 1;
+	}
+	else if(pid == 0){
+		execlp("as", "as", "-o", "progTEMP.o", "progTEMP.s", NULL);
+		fprintf(stderr, "ERROR: Can't run subprocess\n");
+		clean_up(asm, ast, parser, tokens, lexer);
+		return 1;
+	}
+	else{
+		int status;
+		waitpid(pid, &status, 0);
+	}
+	if(remove("progTEMP.s") != 0){
+		fprintf(stderr, "ERROR: Can't remove temporary files\n");
+		clean_up(asm, ast, parser, tokens, lexer);
+		return 1;
+	}
+	pid = fork();
+	if(pid == -1){
+		fprintf(stderr, "ERROR: Fork failed\n");
+		clean_up(asm, ast, parser, tokens, lexer);
+		return 1;
+	}
+	else if(pid == 0){
+		execlp("ld", "ld", "-o", output, "progTEMP.o", NULL);
+		fprintf(stderr, "ERROR: Can't run subprocess\n");
+		return 1;
+	}
+	else{
+		int status;
+		waitpid(pid, &status, 0);
+	}
+	if(remove("progTEMP.o") != 0){
+		fprintf(stderr, "ERROR: Can't remove temporary files\n");
+		clean_up(asm, ast, parser, tokens, lexer);
+		return 1;
+	}
+	clean_up(asm, ast, parser, tokens, lexer);
 	return 0;
 }
