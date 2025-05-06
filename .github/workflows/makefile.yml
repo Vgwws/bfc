@@ -17,8 +17,5 @@ jobs:
     - name: Install dependencies
       run: sudo apt update && sudo apt install -y gcc make binutils
 
-    - name: Debug
-      run: pwd && ls
-
     - name: Compile it
       run: make std
