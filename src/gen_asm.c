@@ -1,5 +1,6 @@
 /* This source code is licensed under MIT License */
 
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
