@@ -101,19 +101,19 @@ char* generate_asm(
 		"  sub $%d, %%r11\n"
 		;
 	const char* val_inc =
-		"  movb (%%r10, %%r11), %%r9\n"
-		"  add $%d, %%r9\n"
-		"  movb %%r9, (%%r10, %%r11)\n"
+		"  movb (%%r10, %%r11), %%r9d\n"
+		"  add $%d, %%r9d\n"
+		"  movb %%r9d, (%%r10, %%r11)\n"
 		;
 	const char* val_dec =
-		"  movb (%%r10, %%r11), %%r9\n"
-		"  sub $%d, %%r9\n"
-		"  movb %%r9, (%%r10, %%r11)\n"
+		"  movb (%%r10, %%r11), %%r9d\n"
+		"  sub $%d, %%r9d\n"
+		"  movb %%r9d, (%%r10, %%r11)\n"
 		;
 	const char* start_loop =
 		"loop%d_start:\n"
-		"  movb (%%r10, %%r11), %%r9\n"
-		"  test %%r9, %%r9\n"
+		"  movb (%%r10, %%r11), %%r9d\n"
+		"  test %%r9d, %%r9d\n"
 		"  jz loop%d_end\n"
 		;
 	const char* end_loop =
@@ -175,8 +175,8 @@ char* generate_asm(
 #elif defined(__x86_64__)
 			index += snprintf(assembly + index, *assembly_size,
 					"loop%d_start:\n"
-					"  movb (%%r10, %%r11), %%r9\n"
-					"  test %%r9, %%r9\n"
+					"  movb (%%r10, %%r11), %%r9d\n"
+					"  test %%r9d, %%r9d\n"
 					"  jz loop%d_end\n",
 					preserve_depth, preserve_depth);
 #endif
@@ -213,9 +213,9 @@ char* generate_asm(
 					ast->node.count);
 #elif defined(__x86_64)
 			snprintf(assembly, *assembly_size,
-					"  movb (%%r10, %%r11), %%r9\n"
-					"  add $%d, %%r9\n"
-					"  movb %%r9, (%%r10, %%r11)\n",
+					"  movb (%%r10, %%r11), %%r9d\n"
+					"  add $%d, %%r9d\n"
+					"  movb %%r9d, (%%r10, %%r11)\n",
 					ast->node.count);
 #endif
 			break;
@@ -230,9 +230,9 @@ char* generate_asm(
 					ast->node.count);
 #elif defined(__x86_64__)
 			snprintf(assembly, *assembly_size,
-					"  movb (%%r10, %%r11), %%r9\n"
-					"  sub $%d, %%r9\n"
-					"  movb %%r9, (%%r10, %%r11)\n",
+					"  movb (%%r10, %%r11), %%r9d\n"
+					"  sub $%d, %%r9d\n"
+					"  movb %%r9d, (%%r10, %%r11)\n",
 					ast->node.count);
 #endif
 			break;
