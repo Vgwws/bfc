@@ -131,7 +131,8 @@ char* generate_asm(
 	const char* output =
 		"  mov $1, %rax\n"
 		"  mov $1, %rdi\n"
-		"  mov (%r10, %r11), %rsi\n"
+		"  mov %r10, %rsi\n"
+		"  add %r11, %rsi\n"
 		"  mov $1, %rdx\n"
 		"  syscall\n"
 		;
