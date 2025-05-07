@@ -101,14 +101,10 @@ char* generate_asm(
 		"  sub $%d, %%r11\n"
 		;
 	const char* val_inc =
-		"  movzbl (%%r10, %%r11), %%r9d\n"
-		"  add $%d, %%r9b\n"
-		"  mov %%r9b, (%%r10, %%r11)\n"
+		"  addb $%d, (%%r10, %%r11)\n"
 		;
 	const char* val_dec =
-		"  movzbl (%%r10, %%r11), %%r9d\n"
-		"  sub $%d, %%r9b\n"
-		"  mov %%r9b, (%%r10, %%r11)\n"
+		"  subb $%d, (%%r10, %%r11)\n"
 		;
 	const char* start_loop =
 		"loop%d_start:\n"
