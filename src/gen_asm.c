@@ -175,7 +175,7 @@ char* generate_asm(
 #elif defined(__x86_64__)
 			index += snprintf(assembly + index, *assembly_size,
 					"loop%d_start:\n"
-					"  mov (%%r10, %%r11), %%r9\n"
+					"  movb (%%r10, %%r11), %%r9\n"
 					"  test %%r9, %%r9\n"
 					"  jz loop%d_end\n",
 					preserve_depth, preserve_depth);
@@ -213,9 +213,9 @@ char* generate_asm(
 					ast->node.count);
 #elif defined(__x86_64)
 			snprintf(assembly, *assembly_size,
-					"  mov (%%r10, %%r11), %%r9\n"
+					"  movb (%%r10, %%r11), %%r9\n"
 					"  add $%d, %%r9\n"
-					"  mov %%r9, (%%r10, %%r11)\n",
+					"  movb %%r9, (%%r10, %%r11)\n",
 					ast->node.count);
 #endif
 			break;
@@ -230,9 +230,9 @@ char* generate_asm(
 					ast->node.count);
 #elif defined(__x86_64__)
 			snprintf(assembly, *assembly_size,
-					"  mov (%%r10, %%r11), %%r9\n"
+					"  movb (%%r10, %%r11), %%r9\n"
 					"  sub $%d, %%r9\n"
-					"  mov %%r9, (%%r10, %%r11)\n",
+					"  movb %%r9, (%%r10, %%r11)\n",
 					ast->node.count);
 #endif
 			break;
