@@ -31,7 +31,12 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y gcc-aarch64-linux-gnu gcc-x86-64-linux-gnu make qemu-user
+        sudo apt install -y gcc-aarch64-linux-gnu \
+                            gcc-x86-64-linux-gnu  \
+                            make                  \
+                            qemu-user             \
+                            libc6-arm64-cross     \
+                            libc6-dev-arm64-cross
 
     - name: Test generated assembly
       run: |
