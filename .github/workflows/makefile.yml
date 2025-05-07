@@ -15,10 +15,16 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: sudo apt update && sudo apt install -y gcc make binutils
+      run: sudo apt update && sudo apt install -y gcc make binutils expect
 
     - name: Test assembly
       run: make test-asm
 
     - name: Test it
-      run: make test-exec
+      run: |
+        expect <<EOD
+        spawn make test-exec
+        expect ""
+        send "Hello\n"
+        expect eof
+        EOD
