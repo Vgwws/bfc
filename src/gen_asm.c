@@ -87,7 +87,7 @@ char* generate_asm(
 		".section .text\n"
 		"_start:\n"
 		"  lea arr(%rip), %r10\n"
-		"  xor %r11, %r11\n"
+		"  xor $0, %r11\n"
 		;
 	const char* end_program =
 		"  mov $60, %rax\n"
