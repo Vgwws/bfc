@@ -63,7 +63,7 @@ int main(int argc, char** argv){
 #endif
 	int opt;
 	short output_assembly = 0;
-	while((opt = getopt(argc, argv, "ho:S:t:")) != -1){
+	while((opt = getopt(argc, argv, "ho:S:t:c:")) != -1){
 		switch(opt){
 			case 'h':
 				printf(
