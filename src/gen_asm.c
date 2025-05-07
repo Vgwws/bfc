@@ -95,10 +95,10 @@ char* generate_asm(
 		"  syscall\n"
 		;
 	const char* ptr_inc =
-		"  addl $%d, %%r11\n"
+		"  add $%d, %%r11\n"
 		;
 	const char* ptr_dec =
-		"  subl $%d, %%r11\n"
+		"  sub $%d, %%r11\n"
 		;
 	const char* val_inc =
 		"  movb (%%r10, %%r11), %%r9\n"
@@ -124,7 +124,7 @@ char* generate_asm(
 		"  mov $0, %rax\n"
 		"  mov $0, %rdi\n"
 		"  mov %r10, %rsi\n"
-		"  add %r11, %rsi\n
+		"  add %r11, %rsi\n"
 		"  mov $1, %rdx\n"
 		"  syscall\n"
 		;
