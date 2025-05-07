@@ -148,7 +148,7 @@ char* generate_asm(
 			if(!assembly) return NULL;
 			index += snprintf(assembly + index, *assembly_size, "%s", start_program);
 			for(unsigned int i = 0; i < ast->child_count; i++){
-				char* new_assembly = generate_asm_aarch64(
+				char* new_assembly = generate_asm(
 						ast->child_nodes[i], assembly_size, depth);
 				assembly = realloc_new_assembly(assembly, assembly_size, new_assembly);
 				if(!assembly) return NULL;
@@ -178,7 +178,7 @@ char* generate_asm(
 					preserve_depth, preserve_depth);
 #endif
 			for(unsigned int i = 0; i < ast->child_count; i++){
-				char* new_assembly = generate_asm_aarch64(
+				char* new_assembly = generate_asm(
 						ast->child_nodes[i], assembly_size, depth);
 				assembly = realloc_new_assembly(assembly, assembly_size, new_assembly);
 				if(!assembly) return NULL;
@@ -241,7 +241,7 @@ char* generate_asm(
 					ast->node.count);
 #elif defined(__x86_64__)
 			snprintf(assembly, *assembly_size,
-					"  add $%d, %r11\n",
+					"  add $%d, %%r11\n",
 					ast->node.count);
 #endif
 			break;
@@ -254,7 +254,7 @@ char* generate_asm(
 					ast->node.count);
 #elif defined(__x86_64__)
 			snprintf(assembly, *assembly_size,
-					"  sub $%d, %r11\n",
+					"  sub $%d, %%r11\n",
 					ast->node.count);
 #endif
 			break;
