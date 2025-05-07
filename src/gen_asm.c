@@ -91,7 +91,7 @@ char* generate_asm(
 		;
 	const char* end_program =
 		"  mov $60, %rax\n"
-		"  mov $0, %rbx\n"
+		"  mov $0, %rdi\n"
 		"  syscall\n"
 		;
 	const char* ptr_inc =
@@ -101,18 +101,18 @@ char* generate_asm(
 		"  subl $%d, %%r11\n"
 		;
 	const char* val_inc =
-		"  mov (%%r10, %%r11), %%r9\n"
+		"  movb (%%r10, %%r11), %%r9\n"
 		"  add $%d, %%r9\n"
-		"  mov %%r9, (%%r10, %%r11)\n"
+		"  movb %%r9, (%%r10, %%r11)\n"
 		;
 	const char* val_dec =
-		"  mov (%%r10, %%r11), %%r9\n"
+		"  movb (%%r10, %%r11), %%r9\n"
 		"  sub $%d, %%r9\n"
-		"  mov %%r9, (%%r10, %%r11)\n"
+		"  movb %%r9, (%%r10, %%r11)\n"
 		;
 	const char* start_loop =
 		"loop%d_start:\n"
-		"  mov (%%r10, %%r11), %%r9\n"
+		"  movb (%%r10, %%r11), %%r9\n"
 		"  test %%r9, %%r9\n"
 		"  jz loop%d_end\n"
 		;
@@ -123,7 +123,8 @@ char* generate_asm(
 	const char* input =
 		"  mov $0, %rax\n"
 		"  mov $0, %rdi\n"
-		"  mov (%r10, %r11), %rsi\n"
+		"  mov %r10, %rsi\n"
+		"  add %r11, %rsi\n
 		"  mov $1, %rdx\n"
 		"  syscall\n"
 		;
