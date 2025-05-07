@@ -1,0 +1,43 @@
+name: Check CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  run:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [aarch64, x86_64]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set CC Based on Targeted Architecture
+      run: |
+        if [ "${{ matrix.arch }}" = "x86_64" ]; then
+          echo "CC=gcc" >> $GITHUB_ENV
+        elif [ "${{ matrix.arch }}" = "aarch64" ]; then
+          echo "CC=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
+        fi
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y gcc-aarch64-linux-gnu gcc-x86-64-linux-gnu make qemu-user
+
+    - name: Test generated assembly
+      run: |
+        make ARCH=${{ matrix.arch }} test-asm
+
+    - name: Test executable
+      run: |
+        if [ "${{ matrix.arch }}" = "x86_64" ]; then
+          echo "Hello from x86_64" | make ARCH=${{ matrix.arch }} CC=${{ env.CC }} test-exec
+        elif [ "${{ matrix.arch }}" = "aarch64" ]; then
+          echo "Hello from AArch64" | qemu-aarch64 make ARCH=${{ matrix.arch }} CC=${{ env.CC }} test-exec
+        fi

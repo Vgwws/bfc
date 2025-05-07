@@ -51,9 +51,19 @@ int main(int argc, char** argv){
 	char* output = "a.out";
 	char* assembly_output = "progTEMP.s";
 	char* input = NULL;
+	char* target_option = NULL;
+	char* cc = "gcc";
+#if defined(__aarch64__)
+	Arch target = aarch64;
+#elif defined(__x86_64__)
+	Arch target = x86_64;
+#else
+	fprintf(stderr, "Unsupported Architecture\n");
+	return 1;
+#endif
 	int opt;
 	short output_assembly = 0;
-	while((opt = getopt(argc, argv, "ho:S:")) != -1){
+	while((opt = getopt(argc, argv, "ho:S:t:")) != -1){
 		switch(opt){
 			case 'h':
 				printf(
@@ -61,7 +71,9 @@ int main(int argc, char** argv){
 						"OPTIONS:\n"
 						"  -h : Print this Help\n"
 						"  -o [FILENAME] : Specifying Output filename, if this option is omitted then default to 'a.out'\n"
-						"  -S [FILENAME] : Specifying Output filename, Assembly Code\n");
+						"  -S [FILENAME] : Specifying Output filename, Assembly Code\n"
+						"  -t [ARCH] : Explicitly set assembly generation to use the specified CPU architecture, May need emulation\n"
+						"  -c [PROGRAM] : Explicitly set assembler and linker program(example: GCC)\n");
 				return 0;
 			case 'o':
 				output = optarg;
@@ -69,6 +81,22 @@ int main(int argc, char** argv){
 			case 'S':
 				assembly_output = optarg;
 				output_assembly = 1;
+				break;
+			case 't':
+				target_option = optarg;
+				if(strcmp(target_option, "aarch64") == 0){
+					target = aarch64;
+				}
+				else if(strcmp(target_option, "x86_64") == 0){
+					target = x86_64;
+				}
+				else{
+					fprintf(stderr, "Unsupported Architecture\n");
+					return 1;
+				}
+				break;
+			case 'c':
+				cc = optarg;
 				break;
 			case '?':
 				fprintf(stderr, "Try ebfc -h for more information\n");
@@ -108,7 +136,7 @@ int main(int argc, char** argv){
 	}
 	unsigned int assembly_size = ASM_SIZE;
 	unsigned int index = 0;
-	char* assembly = generate_asm(ast, &assembly_size, &index);
+	char* assembly = generate_asm(ast, &assembly_size, &index, target);
 	FILE* file = fopen(assembly_output, "w");
 	if(!file){
 		fprintf(stderr, "ERROR: Can't open file\n");
@@ -128,7 +156,7 @@ int main(int argc, char** argv){
 		return 1;
 	}
 	else if(pid == 0){
-		execlp("as", "as", "-o", "progTEMP.o", assembly_output, NULL);
+		execlp(cc, cc, "-nostdlib", "-o", output, assembly_output, NULL);
 		fprintf(stderr, "ERROR: Can't run subprocess\n");
 		clean_up(assembly, ast, parser, tokens, lexer);
 		return 1;
@@ -138,27 +166,7 @@ int main(int argc, char** argv){
 		waitpid(pid, &status, 0);
 	}
 	if(remove(assembly_output) != 0){
-		fprintf(stderr, "ERROR: Can't remove temporary files\n");
-		clean_up(assembly, ast, parser, tokens, lexer);
-		return 1;
-	}
-	pid = fork();
-	if(pid == -1){
-		fprintf(stderr, "ERROR: Fork failed\n");
-		clean_up(assembly, ast, parser, tokens, lexer);
-		return 1;
-	}
-	else if(pid == 0){
-		execlp("ld", "ld", "-o", output, "progTEMP.o", NULL);
-		fprintf(stderr, "ERROR: Can't run subprocess\n");
-		return 1;
-	}
-	else{
-		int status;
-		waitpid(pid, &status, 0);
-	}
-	if(remove("progTEMP.o") != 0){
-		fprintf(stderr, "ERROR: Can't remove temporary files\n");
+		fprintf(stderr, "ERROR: Can't remove temporary assembly files\n");
 		clean_up(assembly, ast, parser, tokens, lexer);
 		return 1;
 	}

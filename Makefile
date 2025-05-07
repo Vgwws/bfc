@@ -2,6 +2,10 @@
 
 all: std debug
 
+ARCH ?= $(shell uname -m)
+
+CC ?= gcc
+
 NAME := bfc
 
 CFLAGS := -I include -Wall -Wextra -Werror -std=gnu99
@@ -25,7 +29,7 @@ INSTALL_TARGETS := $(INSTALL_HEADERS:include/%.h=$(INCLUDEDIR)/%.h) $(BINDIR)/$(
 %: test/%.bf
 	@echo "Source code of $@:"
 	@cat $<
-	./$(NAME)-debug -o $@ $<
+	./$(NAME)-debug -c $(CC) -t $(ARCH) -o $@ $<
 	@echo "Output of $@:"
 	@./$@
 	@echo "\n-----------"
@@ -34,7 +38,7 @@ INSTALL_TARGETS := $(INSTALL_HEADERS:include/%.h=$(INCLUDEDIR)/%.h) $(BINDIR)/$(
 %.s: test/%.bf
 	@echo "Source code of $@:"
 	@cat $<
-	./$(NAME)-debug -S $@ $<
+	./$(NAME)-debug -c $(CC) -t $(ARCH) -S $@ $<
 	@echo "Assembly of $@:"
 	@cat $@
 	@echo "\n-------"
