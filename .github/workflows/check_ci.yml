@@ -38,6 +38,7 @@ jobs:
     - name: Setup AArch64 Environment
       if: matrix.arch == 'aarch64'
       run: |
+        find / -name ld-linux-aarch64.so.1 2>/dev/null
         sudo mkdir -p /lib
         sudo ln -sf /usr /lib
         ls -la /lib/ld-linux-aarch64.so.1
