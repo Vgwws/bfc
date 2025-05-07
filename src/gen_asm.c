@@ -125,8 +125,8 @@ char* generate_asm(
 		"  add %r11, %rsi\n"
 		"  mov $1, %rdx\n"
 		"  syscall\n"
-		"  pop %rcx\n"
 		"  pop %r11\n"
+		"  pop %rcx\n"
 		;
 	const char* output =
 		"  push %rcx\n"
@@ -137,8 +137,8 @@ char* generate_asm(
 		"  add %r11, %rsi\n"
 		"  mov $1, %rdx\n"
 		"  syscall\n"
-		"  pop %rcx\n"
 		"  pop %r11\n"
+		"  pop %rcx\n"
 		;
 #endif
 	char* assembly = malloc(*assembly_size);
