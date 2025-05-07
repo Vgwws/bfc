@@ -49,6 +49,6 @@ jobs:
             echo "Hello from x86_64" | make ARCH=${{ matrix.arch }} CC=${{ env.CC }} test-exec
             ;;
           aarch64)
-            echo "Hello from AArch64" | make ARCH=${{ matrix.arch }} CC=${{ env.CC }} EMULATOR=qemu-aarch64 test-exec
+            echo "Hello from AArch64" | make ARCH=${{ matrix.arch }} CC=${{ env.CC }} EMULATOR="qemu-aarch64 -L /usr/aarch64-linux-gnu" test-exec
             ;;
         esac
