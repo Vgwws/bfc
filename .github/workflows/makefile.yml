@@ -21,10 +21,4 @@ jobs:
       run: make test-asm
 
     - name: Test it
-      run: |
-        expect <<EOD
-        spawn make test-exec
-        expect ""
-        send "Hello\n"
-        expect eof
-        EOD
+      run: make test-exec

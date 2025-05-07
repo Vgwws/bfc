@@ -1,5 +1,9 @@
 .PHONY: all std debug test-exec test-asm clean install uninstall
 
+all: std debug
+
+NAME := bfc
+
 CFLAGS := -I include -Wall -Wextra -Werror -std=gnu99
 
 C_SRC := $(wildcard src/*.c)
@@ -8,7 +12,7 @@ DEBUG_OBJ := $(C_SRC:src/%.c=build/debug/%.o)
 BF_SRC := $(wildcard test/*.bf)
 EXEC := $(BF_SRC:test/%.bf=%)
 ASM := $(BF_SRC:test/%.bf=%.s)
-BFC_VARIANTS := $(wildcard bfc*)
+COMPILED_VARIANTS := $(wildcard $(NAME)*)
 
 PREFIX ?= /usr/local
 
@@ -16,12 +20,12 @@ BINDIR := $(PREFIX)/bin
 INCLUDEDIR := $(PREFIX)/include
 
 INSTALL_HEADERS := $(wildcard include/*.h)
-INSTALL_TARGETS := $(patsubst include/%, $(INCLUDEDIR)/%, $(INSTALL_HEADERS)) $(BINDIR)/bfc
+INSTALL_TARGETS := $(INSTALL_HEADERS:include/%.h=$(INCLUDEDIR)/%.h) $(BINDIR)/$(NAME)
 
 %: test/%.bf
 	@echo "Source code of $@:"
 	@cat $<
-	./bfc-debug -o $@ $<
+	./$(NAME)-debug -o $@ $<
 	@echo "Output of $@:"
 	@./$@
 	@echo "\n-----------"
@@ -30,7 +34,7 @@ INSTALL_TARGETS := $(patsubst include/%, $(INCLUDEDIR)/%, $(INSTALL_HEADERS)) $(
 %.s: test/%.bf
 	@echo "Source code of $@:"
 	@cat $<
-	./bfc-debug -S $@ $<
+	./$(NAME)-debug -S $@ $<
 	@echo "Assembly of $@:"
 	@cat $@
 	@echo "\n-------"
@@ -49,31 +53,33 @@ $(INCLUDEDIR)/%.h: include/%.h
 	cp $< $@
 	chmod 644 $@
 
-$(BINDIR)/bfc: bfc
+$(BINDIR)/$(NAME): $(NAME)
 	@mkdir -p $(dir $@)
 	cp $< $@
 	chmod 755 $@
 
-all: std debug
+$(NAME): $(STD_OBJ)
+	gcc $(STD_OBJ) -o $(NAME)
+	@strip $(NAME)
 
-std: $(STD_OBJ)
-	gcc $(STD_OBJ) -o bfc
-	@strip bfc
+$(NAME)-debug: $(DEBUG_OBJ)
+	gcc -g $(DEBUG_OBJ) -o $(NAME)-debug
 
-debug: $(DEBUG_OBJ)
-	gcc -g $(DEBUG_OBJ) -o bfc-debug
+std: $(NAME)
 
-test-exec: debug $(EXEC)
+debug: $(NAME)-debug
 
-test-asm: debug $(ASM)
+test-exec: $(NAME)-debug $(EXEC)
+
+test-asm: $(NAME)-debug $(ASM)
+
 clean:
 	rm -f $(STD_OBJ)
 	rm -f $(DEBUG_OBJ)
 	rm -f $(ASAN_OBJ)
-	rm -f $(BFC_VARIANTS)
+	rm -f $(COMPILED_VARIANTS)
 
-install: uninstall $(INSTALL_TARGETS)
+install: $(INSTALL_TARGETS)
 
 uninstall:
-	rm -f $(BINDIR)/bfc
-	rm -f $(patsubst include/%, $(INCLUDEDIR)/%, $(INSTALL_HEADERS))
+	rm -f $(INSTALL_TARGETS)
