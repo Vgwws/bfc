@@ -119,7 +119,7 @@ char* generate_asm(
 	const char* input =
 		"  mov $0, %rax\n"
 		"  mov $0, %rdi\n"
-		"  mov %r10, %rsi\n"
+		"  lea arr(%rip), %rsi\n"
 		"  add %r11, %rsi\n"
 		"  mov $1, %rdx\n"
 		"  syscall\n"
@@ -127,7 +127,7 @@ char* generate_asm(
 	const char* output =
 		"  mov $1, %rax\n"
 		"  mov $1, %rdi\n"
-		"  mov %r10, %rsi\n"
+		"  lea arr(%rip), %rsi\n"
 		"  add %r11, %rsi\n"
 		"  mov $1, %rdx\n"
 		"  syscall\n"
@@ -162,7 +162,7 @@ char* generate_asm(
 			unsigned int preserve_depth = *depth;
 			assembly = realloc_new_assembly(assembly, assembly_size, start_loop);
 			if(!assembly) return NULL;
-#if defined(__aarch64)
+#if defined(__aarch64__)
 			index += snprintf(assembly + index, *assembly_size,
 					"loop%d_start:\n"
 					"  ldrb w1, [x3, x4]\n"
@@ -207,7 +207,7 @@ char* generate_asm(
 					"  add w1, w1, %d\n"
 					"  strb w1, [x3, x4]\n",
 					ast->node.count);
-#elif defined(__x86_64)
+#elif defined(__x86_64__)
 			snprintf(assembly, *assembly_size,
 					"  addb $%d, (%%r10, %%r11)\n",
 					ast->node.count);
