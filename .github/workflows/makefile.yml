@@ -17,5 +17,8 @@ jobs:
     - name: Install dependencies
       run: sudo apt update && sudo apt install -y gcc make binutils
 
+    - name: Test assembly
+      run: make test-asm
+
     - name: Test it
       run: make test-exec
