@@ -12,21 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [aarch64, x86_64]
+        include:
+          - arch: x86_64
+            cc: gcc
+            emulator: ""
+            test_input: "Hello from x86_64"
+          - arch: aarch64
+            cc: aarch64-linux-gnu-gcc
+            emulator: "qemu-aarch64"
+            test_input: "Hello from AArch64"
 
     steps:
     - uses: actions/checkout@v4
-
-    - name: Set CC Based on Targeted Architecture
-      run: |
-        case "${{ matrix.arch }}" in
-          x86_64)
-            echo "CC=gcc" >> $GITHUB_ENV
-            ;;
-          aarch64)
-            echo "CC=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
-            ;;
-        esac
 
     - name: Install dependencies
       run: |
@@ -38,18 +35,15 @@ jobs:
                             libc6-arm64-cross     \
                             libc6-dev-arm64-cross
 
-    - name: Test generated assembly
+    - name: Setup AArch64 Environment
+      if: matrix.arch == 'aarch64'
       run: |
-        make ARCH=${{ matrix.arch }} test-asm
+        sudo mkdir -p /lib
+        sudo ln -sf /usr /lib
+        ls -la /lib/ld-linux-aarch64.so.1
+
+    - name: Test generated assembly
+      run: make ARCH=${{ matrix.arch }} test-asm
 
     - name: Test executable
-      run: |
-        case "${{ matrix.arch }}" in
-          x86_64)
-            echo "Hello from x86_64" | make ARCH=${{ matrix.arch }} CC=${{ env.CC }} test-exec
-            ;;
-          aarch64)
-            sudo dpkg --add-architecture arm64
-            echo "Hello from AArch64" | make ARCH=${{ matrix.arch }} CC=${{ env.CC }} EMULATOR="qemu-aarch64 -L /usr/aarch64-linux-gnu" test-exec
-            ;;
-        esac
+      run: echo "${{ matrix.test_input }}" | make ARCH=${{ matrix.arch}} CC=${{ matrix.cc }} EMULATOR=${{ matrix.emulator }} test-exec
