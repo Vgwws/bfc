@@ -153,6 +153,7 @@ char* generate_asm(
 				assembly = realloc_new_assembly(assembly, assembly_size, new_assembly);
 				if(!assembly) return NULL;
 				index += snprintf(assembly + index, *assembly_size, "%s", new_assembly);
+				free(new_assembly);
 			}
 			assembly = realloc_new_assembly(assembly, assembly_size, end_program);
 			if(!assembly) return NULL;
@@ -183,6 +184,7 @@ char* generate_asm(
 				assembly = realloc_new_assembly(assembly, assembly_size, new_assembly);
 				if(!assembly) return NULL;
 				index += snprintf(assembly + index, *assembly_size, "%s", new_assembly);
+				free(new_assembly);
 			}
 			assembly = realloc_new_assembly(assembly, assembly_size, end_loop);
 			if(!assembly) return NULL;
