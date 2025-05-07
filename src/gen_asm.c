@@ -209,9 +209,7 @@ char* generate_asm(
 					ast->node.count);
 #elif defined(__x86_64)
 			snprintf(assembly, *assembly_size,
-					"  movzbl (%%r10, %%r11), %%r9d\n"
-					"  add $%d, %%r9b\n"
-					"  mov %%r9b, (%%r10, %%r11)\n",
+					"  addb $%d, (%%r10, %%r11)\n",
 					ast->node.count);
 #endif
 			break;
@@ -226,9 +224,7 @@ char* generate_asm(
 					ast->node.count);
 #elif defined(__x86_64__)
 			snprintf(assembly, *assembly_size,
-					"  movzbl (%%r10, %%r11), %%r9d\n"
-					"  sub $%d, %%r9b\n"
-					"  mov %%r9b, (%%r10, %%r11)\n",
+					"  subb $%d, (%%r10, %%r11)\n",
 					ast->node.count);
 #endif
 			break;
