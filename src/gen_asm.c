@@ -126,12 +126,14 @@ char* generate_asm(
 		"  mov (%r10, %r11), %rsi\n"
 		"  mov $1, %rdx\n"
 		"  syscall\n"
+		;
 	const char* output =
 		"  mov $1, %rax\n"
 		"  mov $1, %rdi\n"
 		"  mov (%r10, %r11), %rsi\n"
 		"  mov $1, %rdx\n"
 		"  syscall\n"
+		;
 #endif
 	char* assembly = malloc(*assembly_size);
 	if(!assembly){

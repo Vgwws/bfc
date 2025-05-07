@@ -5,7 +5,7 @@
 
 #define ASM_SIZE 1000
 
-char* generate_asm_aarch64(
+char* generate_asm(
 		AST* ast, unsigned int* assembly_size, unsigned int* depth);
 
 #endif

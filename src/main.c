@@ -108,7 +108,7 @@ int main(int argc, char** argv){
 	}
 	unsigned int assembly_size = ASM_SIZE;
 	unsigned int index = 0;
-	char* assembly = generate_asm_aarch64(ast, &assembly_size, &index);
+	char* assembly = generate_asm(ast, &assembly_size, &index);
 	FILE* file = fopen(assembly_output, "w");
 	if(!file){
 		fprintf(stderr, "ERROR: Can't open file\n");
