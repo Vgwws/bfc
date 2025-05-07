@@ -117,20 +117,28 @@ char* generate_asm(
 		"loop%d_end:\n"
 		;
 	const char* input =
+		"  push %rcx\n"
+		"  push %r11\n"
 		"  mov $0, %rax\n"
 		"  mov $0, %rdi\n"
 		"  lea arr(%rip), %rsi\n"
 		"  add %r11, %rsi\n"
 		"  mov $1, %rdx\n"
 		"  syscall\n"
+		"  pop %rcx\n"
+		"  pop %r11\n"
 		;
 	const char* output =
+		"  push %rcx\n"
+		"  push %r11\n"
 		"  mov $1, %rax\n"
 		"  mov $1, %rdi\n"
 		"  lea arr(%rip), %rsi\n"
 		"  add %r11, %rsi\n"
 		"  mov $1, %rdx\n"
 		"  syscall\n"
+		"  pop %rcx\n"
+		"  pop %r11\n"
 		;
 #endif
 	char* assembly = malloc(*assembly_size);

@@ -19,6 +19,8 @@ INSTALL_HEADERS := $(wildcard include/*.h)
 INSTALL_TARGETS := $(patsubst include/%, $(INCLUDEDIR)/%, $(INSTALL_HEADERS)) $(BINDIR)/bfc
 
 %: test/%.bf
+	@echo "Source code of $@:"
+	@cat $<
 	./bfc-debug -o $@ $<
 	@echo "Output of $@:"
 	@./$@
@@ -26,6 +28,8 @@ INSTALL_TARGETS := $(patsubst include/%, $(INCLUDEDIR)/%, $(INSTALL_HEADERS)) $(
 	rm $@
 
 %.s: test/%.bf
+	@echo "Source code of $@:"
+	@cat $<
 	./bfc-debug -S $@ $<
 	@echo "Assembly of $@:"
 	@cat $@
