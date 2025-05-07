@@ -19,7 +19,7 @@ jobs:
 
     - name: Set CC Based on Targeted Architecture
       run: |
-        case "${{ matrix.arch }}"
+        case "${{ matrix.arch }}" in
           x86_64)
             echo "CC=gcc" >> $GITHUB_ENV
             ;;
