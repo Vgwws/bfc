@@ -19,11 +19,14 @@ jobs:
 
     - name: Set CC Based on Targeted Architecture
       run: |
-        if [ "${{ matrix.arch }}" = "x86_64" ]; then
-          echo "CC=gcc" >> $GITHUB_ENV
-        elif [ "${{ matrix.arch }}" = "aarch64" ]; then
-          echo "CC=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
-        fi
+        case "${{ matrix.arch }}"
+          x86_64)
+            echo "CC=gcc" >> $GITHUB_ENV
+            ;;
+          aarch64)
+            echo "CC=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
+            ;;
+        esac
 
     - name: Install dependencies
       run: |
@@ -36,8 +39,11 @@ jobs:
 
     - name: Test executable
       run: |
-        if [ "${{ matrix.arch }}" = "x86_64" ]; then
-          echo "Hello from x86_64" | make ARCH=${{ matrix.arch }} CC=${{ env.CC }} test-exec
-        elif [ "${{ matrix.arch }}" = "aarch64" ]; then
-          echo "Hello from AArch64" | qemu-aarch64 make ARCH=${{ matrix.arch }} CC=${{ env.CC }} test-exec
-        fi
+        case "${{ matrix.arch }}" in
+          x86_64)
+            echo "Hello from x86_64" | make ARCH=${{ matrix.arch }} CC=${{ env.CC }} test-exec
+            ;;
+          aarch64)
+            echo "Hello from AArch64" | qemu-aarch64 make ARCH=${{ matrix.arch }} CC=${{ env.CC }} test-exec
+            ;;
+        esac
