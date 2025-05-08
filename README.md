@@ -2,7 +2,7 @@
 ## Short Description
 A Brainfuck Compiler that compiling Brainfuck into Machine Code or Assembly, written in pure C
 ## Status
-Still non production ready
+Non production ready
 ## Supported CPU Architecture and Platform
 Supported CPU Architecture:
 - AArch64 Linux
