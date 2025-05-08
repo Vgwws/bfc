@@ -45,4 +45,4 @@ jobs:
         ls -la /lib/ld-linux-aarch64.so.1
 
     - name: Test all
-      run: make ARCH=${{ matrix.arch}} CC=${{ matrix.cc }} EMULATOR=${{ matrix.emulator }} TEST_INPUT=${{ matrix.test_input }} test-all
+      run: make ARCH=${{ matrix.arch}} CC=${{ matrix.cc }} EMULATOR=${{ matrix.emulator }} TEST_INPUT="${{ matrix.test_input }}" test-all
