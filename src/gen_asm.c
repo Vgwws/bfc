@@ -51,9 +51,7 @@ char* generate_asm(
 				"  svc 0\n"
 				;
 			val_inc =
-				"  ldrb w1, [x3, x4]\n"
-				"  add w1, w1, %d\n"
-				"  strb w1, [x3, x4]\n"
+				"  add [x3, x4], [x3, x4], %d\n"
 				;
 			val_dec =
 				"  ldrb w1, [x3, x4]\n"
@@ -69,8 +67,7 @@ char* generate_asm(
 			start_loop =
 				"loop%d_start:\n"
 				"  ldrb w1, [x3, x4]\n"
-				"  cmp w1, 0\n"
-				"  beq loop%d_end\n"
+				"  cbz w1, loop%d_end\n"
 				;
 			end_loop =
 				"  b loop%d_start\n"

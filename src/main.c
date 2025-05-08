@@ -69,11 +69,11 @@ int main(int argc, char** argv){
 				printf(
 						"ebfc [OPTIONS] [FILENAME]\n"
 						"OPTIONS:\n"
-						"  -h : Print this Help\n"
-						"  -o [FILENAME] : Specifying Output filename, if this option is omitted then default to 'a.out'\n"
-						"  -S [FILENAME] : Specifying Output filename, Assembly Code\n"
-						"  -t [ARCH] : Explicitly set assembly generation to use the specified CPU architecture, May need emulation\n"
-						"  -c [PROGRAM] : Explicitly set assembler and linker program(example: GCC)\n");
+						"  -o [FILENAME] : Set output files(Machine Code) into [FILENAME]\n"
+						"  -S [FILENAME] : Set output files(Assembly) into [FILENAME]\n"
+						"  -t [ARCH]     : Set target architecture into [ARCH]\n"
+						"  -c [PROGRAM]  : Set Assembler and Linker into [PROGRAM]\n"
+						"  -h            : Print this help\n");
 				return 0;
 			case 'o':
 				output = optarg;
