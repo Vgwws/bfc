@@ -41,7 +41,7 @@ jobs:
                             libc6-dev-arm64-cross
         find / -name ld-linux-aarch64.so.1 2>/dev/null
         sudo mkdir -p /lib
-        sudo ln -sf /usr /lib
+        sudo ln -s /usr/aarch64-linux-gnu /lib
         ls -la /lib/ld-linux-aarch64.so.1
 
     - name: Test all
