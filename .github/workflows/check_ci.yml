@@ -41,4 +41,4 @@ jobs:
                             libc6-dev-arm64-cross
 
     - name: Test all
-      run: make ARCH=${{ matrix.arch}} CC=${{ matrix.cc }} EMULATOR=${{ matrix.emulator }} TEST_INPUT="${{ matrix.test_input }}" test-all
+      run: make ARCH=${{ matrix.arch}} CC=${{ matrix.cc }} EMULATOR="${{ matrix.emulator }}" TEST_INPUT="${{ matrix.test_input }}" test-all
