@@ -1,0 +1,47 @@
+name: CI Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: x86_64
+            cc: gcc
+            emulator: ""
+            test_input: "Hello from x86_64"
+          - arch: aarch64
+            cc: aarch64-linux-gnu-gcc
+            emulator: "qemu-aarch64 -L /usr/aarch64-linux-gnu"
+            test_input: "Hello from AArch64"
+    steps:
+    - name: Clone repository
+      run: |
+        git clone https://codeberg.org/Vgwws/bfc.git
+        cd bfc
+
+    - name: Installing dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y gcc-x86-64-linux-gnu  \
+                            make
+
+    - name: Installing Qemu for non-x86_64 testing architecture
+      if: matrix.arch != 'x86_64'
+      run: sudo apt install qemu-user
+
+    - name: Setup AArch64 Environment Testing
+      if: matrix.arch == 'aarch64'
+      run: |
+        sudo apt install -y gcc-aarch64-linux-gnu \
+                            libc6-arm64-cross     \
+                            libc6-dev-arm64-cross
+
+    - name: Test all
+      run: make ARCH=${{ matrix.arch}} CC=${{ matrix.cc }} EMULATOR="${{ matrix.emulator }}" TEST_INPUT="${{ matrix.test_input }}" test-all
