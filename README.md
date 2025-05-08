@@ -6,7 +6,7 @@ Still non production ready
 ## Supported CPU Architecture and Platform
 Supported CPU Architecture:
 - AArch64 Linux
-- x86_64 Linux (Experimental)
+- x86_64 Linux
 ## How to install it
 First install necessary dependencies
 ### ArchLinux
