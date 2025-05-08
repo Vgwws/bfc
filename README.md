@@ -23,7 +23,7 @@ sudo apt install git gcc make
 ```
 Clone the repository
 ```sh
-git clone https://github.com/Vgwws/bfc.git
+git clone https://codeberg.org/Vgwws/bfc.git
 cd bfc
 ```
 Install it:
