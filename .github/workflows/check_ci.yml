@@ -18,7 +18,7 @@ jobs:
             test_input: "Hello from x86_64"
           - arch: aarch64
             cc: aarch64-linux-gnu-gcc
-            emulator: "qemu-aarch64"
+            emulator: "qemu-aarch64 -L /usr/aarch64-linux-gnu"
             test_input: "Hello from AArch64"
     steps:
     - uses: actions/checkout@v4
@@ -39,8 +39,6 @@ jobs:
         sudo apt install -y gcc-aarch64-linux-gnu \
                             libc6-arm64-cross     \
                             libc6-dev-arm64-cross
-        sudo mkdir -p /lib
-        sudo ln -s /usr/aarch64-linux-gnu/lib /lib
 
     - name: Test all
       run: make ARCH=${{ matrix.arch}} CC=${{ matrix.cc }} EMULATOR=${{ matrix.emulator }} TEST_INPUT="${{ matrix.test_input }}" test-all
