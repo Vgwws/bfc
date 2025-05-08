@@ -1,0 +1,22 @@
+name: Mirror
+
+on:
+  schedule:
+    - cron: 0 * * * *
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        run: |
+          git clone https://github.com/Vgwws/bfc.git
+          cd bfc
+
+      - name: Push to Codeberg
+        env:
+          CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
+        run: |
+          git remote add codeberg https://Vgwws:${{ CODEBERG_TOKEN }}@codeberg.org/Vgwws/bfc.git
+          git push --mirror codeberg
