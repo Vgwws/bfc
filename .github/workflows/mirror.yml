@@ -15,8 +15,6 @@ jobs:
           fetch-depth: 0
 
       - name: Push to Codeberg
-        env :
-          CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
         run: |
-          git remote add codeberg https://Vgwws:${{ env.CODEBERG_TOKEN }}@codeberg.org/Vgwws/bfc.git
+          git remote add codeberg https://Vgwws:${{ secrets.CODEBERG_TOKEN }}@codeberg.org/Vgwws/bfc.git
           git push --mirror codeberg
