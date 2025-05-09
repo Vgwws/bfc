@@ -9,8 +9,6 @@ on:
 jobs:
   mirror:
     runs-on: ubuntu-latest
-    env:
-      CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
     steps:
       - name: Clone repository
         run: |
@@ -18,6 +16,8 @@ jobs:
           cd bfc
 
       - name: Push to Codeberg
+        env :
+          CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
         run: |
-          git remote add codeberg https://Vgwws:${{ CODEBERG_TOKEN }}@codeberg.org/Vgwws/bfc.git
+          git remote add codeberg https://Vgwws:${{ env.CODEBERG_TOKEN }}@codeberg.org/Vgwws/bfc.git
           git push --mirror codeberg
