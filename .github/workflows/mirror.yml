@@ -10,10 +10,7 @@ jobs:
   mirror:
     runs-on: ubuntu-latest
     steps:
-      - name: Clone repository
-        run: |
-          git clone https://github.com/Vgwws/bfc.git
-          cd bfc
+      - uses: actions/checkout@v4
 
       - name: Push to Codeberg
         env :
