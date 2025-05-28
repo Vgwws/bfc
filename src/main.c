@@ -1,4 +1,9 @@
-/* This source code is licensed under MIT License */
+/*
+ * SDPX-License-Identifier: MIT
+ * Copyright (C) 2025 Vgwws
+ *
+ * This file is licensed under MIT. See LICENSE for details.
+ */
 
 #include <unistd.h>
 #include <sys/wait.h>

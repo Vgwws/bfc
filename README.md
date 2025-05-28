@@ -1,4 +1,7 @@
 # Brainfuck Compiler
+## LICENSE
+This project is licensed under the
+[MIT License](LICENSE).
 ## Short Description
 A Brainfuck Compiler that compiling Brainfuck into Machine Code or Assembly, written in pure C
 ## Status
