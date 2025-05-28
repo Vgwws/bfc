@@ -63,7 +63,7 @@ void generate_loop(AST* ast, Context context){
 	switch(context.arch){
 		case aarch64:
 			fprintf(context.output,
-					"loop%d_start:"
+					"loop%d_start:\n"
 					"ldrb w1, [x3, x4]\n"
 					"cbz w1, loop%d_end\n",
 					depth, depth
@@ -71,8 +71,8 @@ void generate_loop(AST* ast, Context context){
 			break;
 		case x86_64:
 			fprintf(context.output,
-					"loop%d_start:"
-					"movzbl, (%%r10, %%r11), %%r9d\n"
+					"loop%d_start:\n"
+					"movzbl (%%r10, %%r11), %%r9d\n"
 					"test %%r9d, %%r9d\n"
 					"jz loop%d_end\n",
 					depth, depth
