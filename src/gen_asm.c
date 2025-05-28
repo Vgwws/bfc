@@ -37,6 +37,17 @@ void generate_program(AST* ast, Context context){
 					"xor %%r11, %%r11\n"
 					);
 			break;
+		case i386:
+			fprintf(context.output,
+					".global _start\n"
+					".section .bss\n"
+					"arr: .skip 30000\n"
+					".section .text\n"
+					"_start:\n"
+					"movl $arr, %%eax\n"
+					"xor %%ebx, %%ebx\n"
+					);
+			break;
 		default:
 			break;
 	}
@@ -57,6 +68,13 @@ void generate_program(AST* ast, Context context){
 					"mov $60, %%rax\n"
 					"mov $0, %%rdi\n"
 					"syscall\n"
+					);
+			break;
+		case i386:
+			fprintf(context.output,
+					"movl $1, %%eax\n"
+					"xor %%ebx, %%ebx\n"
+					"int $0x80\n"
 					);
 			break;
 		default:
@@ -83,6 +101,15 @@ void generate_loop(AST* ast, Context context){
 					depth, depth
 					);
 			break;
+		case i386:
+			fprintf(context.output,
+					"loop%d_start:\n"
+					"movzbl (%%eax, %%ebx), %%ecx\n"
+					"test %%ecx, %%ecx\n"
+					"jz loop%d_end\n",
+					depth, depth
+					);
+			break;
 		default:
 			break;
 	}
@@ -100,6 +127,13 @@ void generate_loop(AST* ast, Context context){
 					);
 			break;
 		case x86_64:
+			fprintf(context.output,
+					"jmp loop%d_start\n"
+					"loop%d_end:\n",
+					depth - 1, depth - 1
+					);
+			break;
+		case i386:
 			fprintf(context.output,
 					"jmp loop%d_start\n"
 					"loop%d_end:\n",
@@ -134,6 +168,19 @@ void generate_output(Context context){
 					"pop %%r11\n"
 					);
 			break;
+		case i386:
+			fprintf(context.output,
+					"pushl %%eax\n"
+					"pushl %%ebx\n"
+					"leal (%%eax, %%ebx), %%ecx\n"
+					"movl $4, %%eax\n"
+					"movl $1, %%ebx\n"
+					"movl $1, %%edx\n"
+					"int $0x80\n"
+					"popl %%ebx\n"
+					"popl %%eax\n"
+					);
+			break;
 		default:
 			break;
 	}
@@ -162,6 +209,19 @@ void generate_input(Context context){
 					"pop %%r11\n"
 					);
 			break;
+		case i386:
+			fprintf(context.output,
+					"pushl %%eax\n"
+					"pushl %%ebx\n"
+					"leal (%%eax, %%ebx), %%ecx\n"
+					"movl $3, %%eax\n"
+					"movl $0, %%ebx\n"
+					"movl $1, %%edx\n"
+					"int $0x80\n"
+					"popl %%ebx\n"
+					"popl %%eax\n"
+					);
+			break;
 		default:
 			break;
 	}
@@ -180,6 +240,12 @@ void generate_val_inc(AST* ast, Context context){
 		case x86_64:
 			fprintf(context.output,
 					"addb $%d, (%%r10, %%r11)\n",
+					ast->node.count
+					);
+			break;
+		case i386:
+			fprintf(context.output,
+					"addb $%d, (%%eax, %%ebx)\n",
 					ast->node.count
 					);
 			break;
@@ -204,6 +270,12 @@ void generate_val_dec(AST* ast, Context context){
 					ast->node.count
 					);
 			break;
+		case i386:
+			fprintf(context.output,
+					"subb $%d, (%%eax, %%ebx)\n",
+					ast->node.count
+					);
+			break;
 		default:
 			break;
 	}
@@ -223,6 +295,12 @@ void generate_ptr_inc(AST* ast, Context context){
 					ast->node.count
 					);
 			break;
+		case i386:
+			fprintf(context.output,
+					"add $%d, %%ebx\n",
+					ast->node.count
+					);
+			break;
 		default:
 			break;
 	}
@@ -239,6 +317,12 @@ void generate_ptr_dec(AST* ast, Context context){
 		case x86_64:
 			fprintf(context.output,
 					"sub $%d, %%r11\n",
+					ast->node.count
+					);
+			break;
+		case i386:
+			fprintf(context.output,
+					"sub $%d, %%ebx\n",
 					ast->node.count
 					);
 			break;

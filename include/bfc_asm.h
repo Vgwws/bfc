@@ -7,7 +7,8 @@
 
 typedef enum {
 	aarch64,
-	x86_64
+	x86_64,
+	i386
 } Arch;
 
 typedef struct {

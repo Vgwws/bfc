@@ -60,6 +60,8 @@ int main(int argc, char** argv){
 	Arch target = aarch64;
 #elif defined(__x86_64__)
 	Arch target = x86_64;
+#elif defined(__i386__)
+	Arch target = i386;
 #else
 	fprintf(stderr, "Unsupported Architecture\n");
 	return 1;
@@ -92,6 +94,9 @@ int main(int argc, char** argv){
 				}
 				else if(strcmp(target_option, "x86_64") == 0){
 					target = x86_64;
+				}
+				else if(strcmp(target_option, "i386") == 0){
+					target = i386;
 				}
 				else{
 					fprintf(stderr, "Unsupported Architecture\n");
@@ -158,7 +163,7 @@ int main(int argc, char** argv){
 		return 1;
 	}
 	else if(pid == 0){
-		execlp(cc, cc, "-nostdlib", "-o", output, assembly_output, NULL);
+		execlp(cc, cc, "-no-pie", "-nostdlib", "-o", output, assembly_output, NULL);
 		fprintf(stderr, "ERROR: Can't run subprocess\n");
 		clean_up(ast, parser, tokens, lexer);
 		return 1;

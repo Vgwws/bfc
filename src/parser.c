@@ -17,7 +17,6 @@
 
 AST* parse_commands(Parser* parser, const Token* tokens);
 AST* parse_command(Parser* parser, const Token* tokens);
-AST* parse_loop(Parser* parser, const Token* tokens);
 
 Parser* parser_init(const Token* tokens){
 	Parser* parser = malloc(sizeof(Parser));
