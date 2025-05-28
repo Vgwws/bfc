@@ -50,8 +50,8 @@ void generate_program(AST* ast, Context context){
 		case x86_64:
 			fprintf(context.output,
 					"mov $60, %%rax\n"
-				  "mov $0, %%rdi\n"
-				  "syscall\n"
+					"mov $0, %%rdi\n"
+					"syscall\n"
 					);
 			break;
 		default:
