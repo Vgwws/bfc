@@ -148,7 +148,6 @@ void generate_input(Context context){
 		case x86_64:
 			fprintf(context.output,
 					"push %%r11\n"
-					"push %%r10\n"
 					"mov $0, %%rax\n"
 					"mov $0, %%rdi\n"
 					"lea arr(%%rip), %%rsi\n"
