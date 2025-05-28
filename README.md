@@ -46,6 +46,4 @@ make uninstall
 
                 (e.g., gcc, clang)
 
-                Potentially be deprecated after new independent assembler and linker added
-
 \-h            : Print this help

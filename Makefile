@@ -1,6 +1,4 @@
-.PHONY: all std debug test-exec test-asm test-all clean install uninstall
-
-all: std debug
+.PHONY: all debug test-exec test-asm test-all clean install uninstall
 
 ARCH              ?= $(shell uname -m)
 
@@ -11,13 +9,13 @@ NAME              := bfc
 CFLAGS            := -I include -Wall -Wextra -Werror -std=gnu99
 
 C_SRC             := $(wildcard src/*.c)
-STD_OBJ           := $(C_SRC:src/%.c=%.o)
-DEBUG_OBJ         := $(C_SRC:src/%.c=%-debug.o)
+STD_OBJ           := $(C_SRC:src/%.c=build/%.o)
+DEBUG_OBJ         := $(C_SRC:src/%.c=build/%-debug.o)
+OBJ               := $(STD_OBJ) $(DEBUG_OBJ)
 BF_SRC            := $(wildcard test/*.bf)
 EXEC              := $(BF_SRC:test/%.bf=%)
 ASM               := $(BF_SRC:test/%.bf=%.s)
 TEST_INPUT        ?= Hello
-COMPILED_VARIANTS := $(wildcard $(NAME)*)
 
 PREFIX            ?= /usr/local
 
@@ -27,11 +25,13 @@ INCLUDEDIR        := $(PREFIX)/include
 INSTALL_HEADERS   := $(wildcard include/*.h)
 INSTALL_TARGETS   := $(INSTALL_HEADERS:include/%.h=$(INCLUDEDIR)/%.h) $(BINDIR)/$(NAME)
 
+all: $(NAME)
+
 %: test/%.bf
 	@echo "Test $@.bf Executable"
 	@echo "-------------------------------------"
-	./$(NAME)-debug -c $(CC) -t $(ARCH) -o $@ $<
-	echo $(TEST_INPUT) | $(EMULATOR) ./$@
+	./$(NAME)-debug -c "$(CC)" -t $(ARCH) -o $@ $<
+	echo "$(TEST_INPUT)" | $(EMULATOR) ./$@
 	@echo ""
 	rm $@
 	@echo "-------------------------------------\n"
@@ -44,10 +44,12 @@ INSTALL_TARGETS   := $(INSTALL_HEADERS:include/%.h=$(INCLUDEDIR)/%.h) $(BINDIR)/
 	rm $@
 	@echo "-------------------------------------\n"
 
-%.o: src/%.c
+build/%.o: src/%.c
+	@mkdir -p build
 	gcc -c $< -o $@ $(CFLAGS) -O2
 
-%-debug.o: src/%.c
+build/%-debug.o: src/%.c
+	@mkdir -p build
 	gcc -g -c $< -o $@ $(CFLAGS) -O0
 
 $(INCLUDEDIR)/%.h: include/%.h
@@ -62,14 +64,10 @@ $(BINDIR)/$(NAME): $(NAME)
 
 $(NAME): $(STD_OBJ)
 	gcc $(STD_OBJ) -o $(NAME)
-	rm -f $(STD_OBJ)
 	@strip $(NAME)
 
 $(NAME)-debug: $(DEBUG_OBJ)
 	gcc -g $(DEBUG_OBJ) -o $(NAME)-debug
-	rm -f $(DEBUG_OBJ)
-
-std: $(NAME)
 
 debug: $(NAME)-debug
 
@@ -80,9 +78,11 @@ test-asm: $(NAME)-debug $(ASM)
 test-all: $(NAME)-debug $(ASM) $(EXEC)
 
 clean:
+	rm -f $(OBJ)
 	rm -f $(ASM)
 	rm -f $(EXEC)
-	rm -f $(COMPILED_VARIANTS)
+	rm -f $(NAME)
+	rm -f $(NAME)-debug
 
 install: $(INSTALL_TARGETS)
 

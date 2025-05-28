@@ -12,9 +12,7 @@
 
 #define TOKENS_SIZE 100
 
-static inline void clean_up(
-		char* assembly, AST* ast, Parser* parser, Token* tokens, Lexer* lexer){
-	free(assembly);
+static inline void clean_up(AST* ast, Parser* parser, Token* tokens, Lexer* lexer){
 	clean_ast(ast);
 	free(parser);
 	free(tokens);
@@ -128,37 +126,36 @@ int main(int argc, char** argv){
 	Parser* parser = parser_init(tokens);
 	AST* ast = parse_program(parser, tokens);
 	if(parser->error_flag){
-		clean_ast(ast);
-		free(parser);
-		free(tokens);
-		free(lexer);
+		clean_up(ast, parser, tokens, lexer);
 		return 1;
 	}
-	unsigned int assembly_size = ASM_SIZE;
-	unsigned int index = 0;
-	char* assembly = generate_asm(ast, &assembly_size, &index, target);
 	FILE* file = fopen(assembly_output, "w");
 	if(!file){
 		fprintf(stderr, "ERROR: Can't open file\n");
-		clean_up(assembly, ast, parser, tokens, lexer);
+		clean_up(ast, parser, tokens, lexer);
 		return 1;
 	}
-	fwrite(assembly, 1, strlen(assembly), file);
-	fclose(file);
+	Context context = {
+		.output = file,
+		.arch = target,
+		.node_type = AST_PROGRAM
+	};
+	generate_asm(ast, context);
 	if(output_assembly){
-		clean_up(assembly, ast, parser, tokens, lexer);
+		clean_up(ast, parser, tokens, lexer);
 		return 0;
 	}
+	fclose(file);
 	pid_t pid = fork();
 	if(pid == -1){
 		fprintf(stderr, "ERROR: Fork failed\n");
-		clean_up(assembly, ast, parser, tokens, lexer);
+		clean_up(ast, parser, tokens, lexer);
 		return 1;
 	}
 	else if(pid == 0){
 		execlp(cc, cc, "-nostdlib", "-o", output, assembly_output, NULL);
 		fprintf(stderr, "ERROR: Can't run subprocess\n");
-		clean_up(assembly, ast, parser, tokens, lexer);
+		clean_up(ast, parser, tokens, lexer);
 		return 1;
 	}
 	else{
@@ -167,9 +164,9 @@ int main(int argc, char** argv){
 	}
 	if(remove(assembly_output) != 0){
 		fprintf(stderr, "ERROR: Can't remove temporary assembly files\n");
-		clean_up(assembly, ast, parser, tokens, lexer);
+		clean_up(ast, parser, tokens, lexer);
 		return 1;
 	}
-	clean_up(assembly, ast, parser, tokens, lexer);
+	clean_up(ast, parser, tokens, lexer);
 	return 0;
 }

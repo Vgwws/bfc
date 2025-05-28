@@ -9,8 +9,9 @@
 *.tmp
 *.log
 *.txt
+*.bin
 *~
 *-debug
-build/
+build
 core
 bfc

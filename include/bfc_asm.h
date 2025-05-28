@@ -10,7 +10,12 @@ typedef enum {
 	x86_64
 } Arch;
 
-char* generate_asm(
-		AST* ast, unsigned int* assembly_size, unsigned int* depth, Arch arch);
+typedef struct {
+	FILE* output;
+	ASTNodeType node_type;
+	Arch arch;
+} Context;
+
+void generate_asm(AST* ast, Context context);
 
 #endif
