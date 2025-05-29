@@ -147,12 +147,6 @@ void generate_loop(AST* ast, Context context){
 	}
 	switch(context.arch){
 		case aarch64:
-			fprintf(context.output,
-					"b loop%d_start\n"
-					"loop%d_end:\n",
-					depth - 1, depth - 1
-					);
-			break;
 		case aarch32:
 			fprintf(context.output,
 					"b loop%d_start\n"
@@ -161,12 +155,6 @@ void generate_loop(AST* ast, Context context){
 					);
 			break;
 		case x86_64:
-			fprintf(context.output,
-					"jmp loop%d_start\n"
-					"loop%d_end:\n",
-					depth - 1, depth - 1
-					);
-			break;
 		case i386:
 			fprintf(context.output,
 					"jmp loop%d_start\n"
@@ -245,7 +233,7 @@ void generate_input(Context context){
 					"mov r7, #3\n"
 					"mov r0, #0\n"
 					"add r1, r3, r4\n"
-					"mov x2, #1\n"
+					"mov r2, #1\n"
 					"svc #0\n"
 					);
 			break;
