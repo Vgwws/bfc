@@ -3,14 +3,15 @@
 This project is licensed under the
 [MIT License](LICENSE).
 ## Short Description
-A Brainfuck Compiler that compiling Brainfuck into Machine Code or Assembly, written in pure C
+A Brainfuck Compiler that compiling Brainfuck into Assembly/Machine Code, written in pure C.
+Generated Assembly/Machine Code are intended to run in Linux.
 ## Status
-Non production ready
-## Supported CPU Architecture and Platform
-Supported CPU Architecture:
-- AArch64 Linux
-- x86_64 Linux
-- i686 Linux
+???
+## Supported CPU Architecture
+- AArch64
+- AArch32
+- x86_64
+- i686
 ## How to install it
 First install necessary dependencies
 ### ArchLinux
