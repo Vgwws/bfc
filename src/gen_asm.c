@@ -33,7 +33,7 @@ void generate_program(AST* ast, Context context){
 					"arr: .skip 30000\n"
 					".section .text\n"
 					"_start:\n"
-					"adr r3, =arr\n"
+					"ldr r3, =arr\n"
 					"mov r4, #0\n"
 					);
 			break;
