@@ -22,7 +22,7 @@ jobs:
             test_input: "Hello from AArch64"
           - arch: aarch32
             cc: arm-linux-gnueabihf-gcc
-            emulator: "qemu-armeb-static"
+            emulator: "qemu-arm-static"
             test_input: "Hello from AArch32"
           - arch: i386
             cc: i686-linux-gnu-gcc
