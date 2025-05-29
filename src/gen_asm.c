@@ -33,7 +33,7 @@ void generate_program(AST* ast, Context context){
 					"arr: .skip 30000\n"
 					".section .text\n"
 					"_start:\n"
-					"adr r3, arr\n"
+					"adr r3, =arr\n"
 					"mov r4, #0\n"
 					);
 			break;
@@ -78,7 +78,7 @@ void generate_program(AST* ast, Context context){
 			fprintf(context.output,
 					"mov r7, #1\n"
 					"mov r0, #0\n"
-					"svc 0\n"
+					"svc #0\n"
 					);
 			break;
 		case x86_64:
