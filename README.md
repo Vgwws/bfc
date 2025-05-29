@@ -10,6 +10,7 @@ Non production ready
 Supported CPU Architecture:
 - AArch64 Linux
 - x86_64 Linux
+- i686 Linux
 ## How to install it
 First install necessary dependencies
 ### ArchLinux
