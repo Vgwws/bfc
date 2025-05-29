@@ -34,7 +34,7 @@ void generate_program(AST* ast, Context context){
 					".section .text\n"
 					"_start:\n"
 					"adr r3, arr\n"
-					"mov r4, 0\n"
+					"mov r4, #0\n"
 					);
 			break;
 		case x86_64:
@@ -76,8 +76,8 @@ void generate_program(AST* ast, Context context){
 			break;
 		case aarch32:
 			fprintf(context.output,
-					"mov r7, 1\n"
-					"mov r0, 0\n"
+					"mov r7, #1\n"
+					"mov r0, #0\n"
 					"svc 0\n"
 					);
 			break;
@@ -114,7 +114,8 @@ void generate_loop(AST* ast, Context context){
 			fprintf(context.output,
 					"loop%d_start:\n"
 					"ldrb r0, [r3, r4]\n"
-					"cbz r0, loop%d_end\n",
+					"cmp r0, #0\n"
+					"beq loop%d_end\n",
 					depth, depth
 					);
 			break;
@@ -191,11 +192,11 @@ void generate_output(Context context){
 			break;
 		case aarch32:
 			fprintf(context.output,
-					"mov r7, 4\n"
-					"mov r0, 1\n"
+					"mov r7, #4\n"
+					"mov r0, #1\n"
 					"add r1, r3, r4\n"
-					"mov r2, 1\n"
-					"svc 0\n"
+					"mov r2, #1\n"
+					"svc #0\n"
 					);
 			break;
 		case x86_64:
@@ -241,11 +242,11 @@ void generate_input(Context context){
 			break;
 		case aarch32:
 			fprintf(context.output,
-					"mov r7, 3\n"
-					"mov r0, 0\n"
+					"mov r7, #3\n"
+					"mov r0, #0\n"
 					"add r1, r3, r4\n"
-					"mov x2, 1\n"
-					"svc 0\n"
+					"mov x2, #1\n"
+					"svc #0\n"
 					);
 			break;
 		case x86_64:
@@ -291,7 +292,7 @@ void generate_val_inc(AST* ast, Context context){
 		case aarch32:
 			fprintf(context.output,
 					"ldrb r0, [r3, r4]\n"
-					"add r0, r0, %d\n"
+					"add r0, r0, #%d\n"
 					"strb r0, [r3, r4]\n",
 					ast->node.count
 					);
@@ -326,7 +327,7 @@ void generate_val_dec(AST* ast, Context context){
 		case aarch32:
 			fprintf(context.output,
 					"ldrb r0, [r3, r4]\n"
-					"sub r0, r0, %d\n"
+					"sub r0, r0, #%d\n"
 					"strb r0, [r3, r4]\n",
 					ast->node.count
 					);
@@ -359,7 +360,7 @@ void generate_ptr_inc(AST* ast, Context context){
 			break;
 		case aarch32:
 			fprintf(context.output,
-					"add r4, r4, %d\n",
+					"add r4, r4, #%d\n",
 					ast->node.count
 					);
 			break;
@@ -390,7 +391,7 @@ void generate_ptr_dec(AST* ast, Context context){
 			break;
 		case aarch32:
 			fprintf(context.output,
-					"sub r4, r4, %d\n",
+					"sub r4, r4, #%d\n",
 					ast->node.count
 					);
 			break;
