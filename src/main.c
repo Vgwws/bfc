@@ -58,13 +58,14 @@ int main(int argc, char** argv){
 	char* cc = "gcc";
 #if defined(__aarch64__)
 	Arch target = aarch64;
+#elif defined(__arm__)
+	Arch target = aarch32;
 #elif defined(__x86_64__)
 	Arch target = x86_64;
 #elif defined(__i386__)
 	Arch target = i386;
 #else
-	fprintf(stderr, "Unsupported Architecture\n");
-	return 1;
+#error "Unsupported Architecture"
 #endif
 	int opt;
 	short output_assembly = 0;
@@ -89,15 +90,14 @@ int main(int argc, char** argv){
 				break;
 			case 't':
 				target_option = optarg;
-				if(strcmp(target_option, "aarch64") == 0){
+				if(strcmp(target_option, "aarch64") == 0)
 					target = aarch64;
-				}
-				else if(strcmp(target_option, "x86_64") == 0){
+				else if(strcmp(target_option, "aarch32") == 0)
+					target = aarch32;
+				else if(strcmp(target_option, "x86_64") == 0)
 					target = x86_64;
-				}
-				else if(strcmp(target_option, "i386") == 0){
+				else if(strcmp(target_option, "i386") == 0)
 					target = i386;
-				}
 				else{
 					fprintf(stderr, "Unsupported Architecture\n");
 					return 1;

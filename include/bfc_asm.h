@@ -7,6 +7,7 @@
 
 typedef enum {
 	aarch64,
+	aarch32,
 	x86_64,
 	i386
 } Arch;

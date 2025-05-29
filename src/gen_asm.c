@@ -26,6 +26,17 @@ void generate_program(AST* ast, Context context){
 					"mov x4, 0\n"
 					);
 			break;
+		case aarch32:
+			fprintf(context.output,
+					".global _start\n"
+					".section .bss\n"
+					"arr: .skip 30000\n"
+					".section .text\n"
+					"_start:\n"
+					"adr r3, arr\n"
+					"mov r4, 0\n"
+					);
+			break;
 		case x86_64:
 			fprintf(context.output,
 					".global _start\n"
@@ -58,8 +69,15 @@ void generate_program(AST* ast, Context context){
 	switch(context.arch){
 		case aarch64:
 			fprintf(context.output,
-					"mov x0, 0\n"
 					"mov x8, 93\n"
+					"mov x0, 0\n"
+					"svc 0\n"
+					);
+			break;
+		case aarch32:
+			fprintf(context.output,
+					"mov r7, 1\n"
+					"mov r0, 0\n"
 					"svc 0\n"
 					);
 			break;
@@ -89,6 +107,14 @@ void generate_loop(AST* ast, Context context){
 					"loop%d_start:\n"
 					"ldrb w1, [x3, x4]\n"
 					"cbz w1, loop%d_end\n",
+					depth, depth
+					);
+			break;
+		case aarch32:
+			fprintf(context.output,
+					"loop%d_start:\n"
+					"ldrb r0, [r3, r4]\n"
+					"cbz r0, loop%d_end\n",
 					depth, depth
 					);
 			break;
@@ -126,6 +152,13 @@ void generate_loop(AST* ast, Context context){
 					depth - 1, depth - 1
 					);
 			break;
+		case aarch32:
+			fprintf(context.output,
+					"b loop%d_start\n"
+					"loop%d_end:\n",
+					depth - 1, depth - 1
+					);
+			break;
 		case x86_64:
 			fprintf(context.output,
 					"jmp loop%d_start\n"
@@ -149,10 +182,19 @@ void generate_output(Context context){
 	switch(context.arch){
 		case aarch64:
 			fprintf(context.output,
+					"mov x8, 64\n"
 					"mov x0, 1\n"
 					"add x1, x3, x4\n"
 					"mov x2, 1\n"
-					"mov x8, 64\n"
+					"svc 0\n"
+					);
+			break;
+		case aarch32:
+			fprintf(context.output,
+					"mov r7, 4\n"
+					"mov r0, 1\n"
+					"add r1, r3, r4\n"
+					"mov r2, 1\n"
 					"svc 0\n"
 					);
 			break;
@@ -190,10 +232,19 @@ void generate_input(Context context){
 	switch(context.arch){
 		case aarch64:
 			fprintf(context.output,
+					"mov x8, 63\n"
 					"mov x0, 0\n"
 					"add x1, x3, x4\n"
 					"mov x2, 1\n"
-					"mov x8, 63\n"
+					"svc 0\n"
+					);
+			break;
+		case aarch32:
+			fprintf(context.output,
+					"mov r7, 3\n"
+					"mov r0, 0\n"
+					"add r1, r3, r4\n"
+					"mov x2, 1\n"
 					"svc 0\n"
 					);
 			break;
@@ -237,6 +288,14 @@ void generate_val_inc(AST* ast, Context context){
 					ast->node.count
 					);
 			break;
+		case aarch32:
+			fprintf(context.output,
+					"ldrb r0, [r3, r4]\n"
+					"add r0, r0, %d\n"
+					"strb r0, [r3, r4]\n",
+					ast->node.count
+					);
+			break;
 		case x86_64:
 			fprintf(context.output,
 					"addb $%d, (%%r10, %%r11)\n",
@@ -264,6 +323,15 @@ void generate_val_dec(AST* ast, Context context){
 					ast->node.count
 					);
 			break;
+		case aarch32:
+			fprintf(context.output,
+					"ldrb r0, [r3, r4]\n"
+					"sub r0, r0, %d\n"
+					"strb r0, [r3, r4]\n",
+					ast->node.count
+					);
+			break;
+		
 		case x86_64:
 			fprintf(context.output,
 					"subb $%d, (%%r10, %%r11)\n",
@@ -289,6 +357,12 @@ void generate_ptr_inc(AST* ast, Context context){
 					ast->node.count
 					);
 			break;
+		case aarch32:
+			fprintf(context.output,
+					"add r4, r4, %d\n",
+					ast->node.count
+					);
+			break;
 		case x86_64:
 			fprintf(context.output,
 					"add $%d, %%r11\n",
@@ -311,6 +385,12 @@ void generate_ptr_dec(AST* ast, Context context){
 		case aarch64:
 			fprintf(context.output,
 					"sub x4, x4, %d\n",
+					ast->node.count
+					);
+			break;
+		case aarch32:
+			fprintf(context.output,
+					"sub r4, r4, %d\n",
 					ast->node.count
 					);
 			break;
