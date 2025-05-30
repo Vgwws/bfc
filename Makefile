@@ -26,13 +26,13 @@ $(BINDIR)/$(NAME): $(NAME)
 	chmod 755 $@
 
 test-exec: all
-	$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT=$(TEST_INPUT) EMULATOR=$(EMULATOR) test-exec
+	$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT="$(TEST_INPUT)" EMULATOR="$(EMULATOR)" test-exec
 
 test-asm: all
-	$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT=$(TEST_INPUT) EMULATOR=$(EMULATOR) test-asm
+	$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT="$(TEST_INPUT)" EMULATOR="$(EMULATOR)" test-asm
 
 test-all: all
-	$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT=$(TEST_INPUT) EMULATOR=$(EMULATOR) test-all
+	$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT="$(TEST_INPUT)" EMULATOR="$(EMULATOR)" test-all
 
 clean:
 	rm -f $(ASM)
