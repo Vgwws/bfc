@@ -11,7 +11,10 @@ typedef enum {
 	AST_PTR_DEC,
 	AST_INPUT,
 	AST_OUTPUT,
-	AST_LOOP
+	AST_LOOP,
+	AST_MUL_INC,
+	AST_MUL_DEC,
+	AST_ZERO
 } ASTNodeType;
 
 typedef struct {
@@ -21,6 +24,7 @@ typedef struct {
 
 typedef struct AST {
 	ASTNode node;
+	unsigned int num;
 	struct AST** child_nodes;
 	unsigned int child_count;
 	unsigned int capacity;

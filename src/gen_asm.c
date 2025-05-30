@@ -62,10 +62,8 @@ void generate_program(AST* ast, Context context){
 		default:
 			break;
 	}
-	for(unsigned int i = 0; i < ast->child_count; i++){
-		context.node_type = ast->child_nodes[i]->node.type;
+	for(unsigned int i = 0; i < ast->child_count; i++)
 		generate_asm(ast->child_nodes[i], context);
-	}
 	switch(context.arch){
 		case aarch64:
 			fprintf(context.output,
@@ -141,10 +139,8 @@ void generate_loop(AST* ast, Context context){
 			break;
 	}
 	depth++;
-	for(unsigned int i = 0; i < ast->child_count; i++){
-		context.node_type = ast->child_nodes[i]->node.type;
+	for(unsigned int i = 0; i < ast->child_count; i++)
 		generate_asm(ast->child_nodes[i], context);
-	}
 	switch(context.arch){
 		case aarch64:
 		case aarch32:
@@ -160,6 +156,50 @@ void generate_loop(AST* ast, Context context){
 					"jmp loop%d_start\n"
 					"loop%d_end:\n",
 					depth - 1, depth - 1
+					);
+			break;
+		default:
+			break;
+	}
+}
+
+void generate_mul(AST* ast, Context context){
+	const char* move = ast->node.type == AST_MUL_INC ? "add" : "sub";
+	switch(context.arch){
+		case aarch64:
+			fprintf(context.output,
+					"mov w1, %d\n"
+					"ldrb w0, [x3, x4]\n"
+					"mul w0, w0, w1\n"
+					"%s x5, x4, %d\n"
+					"strb w0, [x3, x5]\n",
+					ast->node.count, move, ast->num
+					);
+			break;
+		case aarch32:
+			fprintf(context.output,
+					"mov r1, #%d\n"
+					"ldrb r0, [r3, r4]\n"
+					"mul r0, r0, r1\n"
+					"%s r5, r4, #%d\n"
+					"strb r0, [r3, r5]\n",
+					ast->node.count, move, ast->num
+					);
+			break;
+		case x86_64:
+			fprintf(context.output,
+					"movl %%r11, %%r12\n"
+					"%s $%d, %%r12\n"
+					"mulb $%d, (%%r10, %%r12)\n",
+					move, ast->node.count, ast->num
+					);
+			break;
+		case i386:
+			fprintf(context.output,
+					"movl %%ebx, %%ecx\n"
+					"%s $%d, %%ecx\n"
+					"mulb $%d, (%%eax, %%ecx)\n",
+					move, ast->node.count, ast->num
 					);
 			break;
 		default:
@@ -426,6 +466,10 @@ void generate_asm(AST* ast, Context context){
 			break;
 		case AST_OUTPUT:
 			generate_output(context);
+			break;
+		case AST_MUL_INC:
+		case AST_MUL_DEC:
+			generate_mul(ast, context);
 			break;
 		default:
 			break;

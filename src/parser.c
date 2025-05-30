@@ -55,6 +55,7 @@ AST* parse_commands(Parser* parser, const Token* tokens){
 	}
 	ast->capacity = CHILDS_SIZE;
 	ast->child_count = 0;
+	ast->num = 0;
 	while(parser->current_token.type != TOKEN_EOF &&
 			parser->current_token.type != TOKEN_CLOSE_LOOP){
 		ast->child_count++;
@@ -99,6 +100,11 @@ AST* parse_command(Parser* parser, const Token* tokens){
 		parser->error_flag = 1;
 		return NULL;
 	}
+	ast->node.count = 0;
+	ast->child_count = 0;
+	ast->capacity = 0;
+	ast->num = 0;
+	ast->child_nodes = NULL;
 	switch(parser->current_token.type){
 		case TOKEN_VAL_INC:
 			ast->node.type = AST_VAL_INC;

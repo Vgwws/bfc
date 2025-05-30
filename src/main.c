@@ -13,6 +13,7 @@
 
 #include "bfc_lexer.h"
 #include "bfc_parser.h"
+#include "bfc_optimizer.h"
 #include "bfc_asm.h"
 
 #define TOKENS_SIZE 100
@@ -139,6 +140,7 @@ int main(int argc, char** argv){
 		clean_up(ast, parser, tokens, lexer);
 		return 1;
 	}
+	optimize_ast(ast);
 	FILE* file = fopen(assembly_output, "w");
 	if(!file){
 		fprintf(stderr, "ERROR: Can't open file\n");
@@ -147,8 +149,7 @@ int main(int argc, char** argv){
 	}
 	Context context = {
 		.output = file,
-		.arch = target,
-		.node_type = AST_PROGRAM
+		.arch = target
 	};
 	generate_asm(ast, context);
 	if(output_assembly){
@@ -163,7 +164,7 @@ int main(int argc, char** argv){
 		return 1;
 	}
 	else if(pid == 0){
-		execlp(cc, cc, "-no-pie", "-nostdlib", "-o", output, assembly_output, NULL);
+		execlp(cc, cc, "-nostdlib", "-o", output, assembly_output, NULL);
 		fprintf(stderr, "ERROR: Can't run subprocess\n");
 		clean_up(ast, parser, tokens, lexer);
 		return 1;

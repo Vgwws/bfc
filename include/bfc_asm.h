@@ -14,7 +14,6 @@ typedef enum {
 
 typedef struct {
 	FILE* output;
-	ASTNodeType node_type;
 	Arch arch;
 } Context;
 

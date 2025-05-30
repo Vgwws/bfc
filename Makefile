@@ -1,90 +1,48 @@
-.PHONY: all debug test-exec test-asm test-all clean install uninstall
+.PHONY: all asan-debug test-exec test-asm test-all clean install uninstall
 
 ARCH              ?= $(shell uname -m)
 
 CC                ?= gcc
 
-NAME              := bfc
-
-CFLAGS            := -I include -Wall -Wextra -Werror -std=gnu99
-
-C_SRC             := $(wildcard src/*.c)
-STD_OBJ           := $(C_SRC:src/%.c=build/%.o)
-DEBUG_OBJ         := $(C_SRC:src/%.c=build/%-debug.o)
-OBJ               := $(STD_OBJ) $(DEBUG_OBJ)
-BF_SRC            := $(wildcard test/*.bf)
-EXEC              := $(BF_SRC:test/%.bf=%)
-ASM               := $(BF_SRC:test/%.bf=%.s)
 TEST_INPUT        ?= Hello
+
+NAME              := bfc
 
 PREFIX            ?= /usr/local
 
 BINDIR            := $(PREFIX)/bin
-INCLUDEDIR        := $(PREFIX)/include
 
-INSTALL_HEADERS   := $(wildcard include/*.h)
-INSTALL_TARGETS   := $(INSTALL_HEADERS:include/%.h=$(INCLUDEDIR)/%.h) $(BINDIR)/$(NAME)
+INSTALL_TARGETS   := $(BINDIR)/$(NAME)
 
-all: $(NAME)
+all:
+	$(MAKE) -C src all
 
-%: test/%.bf
-	@echo "Test $@.bf Executable"
-	@echo "-------------------------------------"
-	./$(NAME)-debug -c "$(CC)" -t $(ARCH) -o $@ $<
-	echo "$(TEST_INPUT)" | $(EMULATOR) ./$@
-	@echo ""
-	rm $@
-	@echo "-------------------------------------\n"
-
-%.s: test/%.bf
-	@echo "Test $(notdir $<) Assembly"
-	@echo "-------------------------------------"
-	./$(NAME)-debug -c $(CC) -t $(ARCH) -S $@ $<
-	cat $@
-	rm $@
-	@echo "-------------------------------------\n"
-
-build/%.o: src/%.c
-	@mkdir -p build
-	gcc -c $< -o $@ $(CFLAGS) -O2
-
-build/%-debug.o: src/%.c
-	@mkdir -p build
-	gcc -g -c $< -o $@ $(CFLAGS) -O0
-
-$(INCLUDEDIR)/%.h: include/%.h
-	@mkdir -p $(dir $@)
-	cp $< $@
-	chmod 644 $@
+asan-debug:
+	$(MAKE) -C src asan-debug
 
 $(BINDIR)/$(NAME): $(NAME)
 	@mkdir -p $(dir $@)
 	cp $< $@
 	chmod 755 $@
 
-$(NAME): $(STD_OBJ)
-	gcc $(STD_OBJ) -o $(NAME)
-	@strip $(NAME)
+test-exec: all
+	$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT=$(TEST_INPUT) EMULATOR=$(EMULATOR) test-exec
 
-$(NAME)-debug: $(DEBUG_OBJ)
-	gcc -g $(DEBUG_OBJ) -o $(NAME)-debug
+test-asm: all
+	$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT=$(TEST_INPUT) EMULATOR=$(EMULATOR) test-asm
 
-debug: $(NAME)-debug
-
-test-exec: $(NAME)-debug $(EXEC)
-
-test-asm: $(NAME)-debug $(ASM)
-
-test-all: $(NAME)-debug $(ASM) $(EXEC)
+test-all: all
+	$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT=$(TEST_INPUT) EMULATOR=$(EMULATOR) test-all
 
 clean:
-	rm -f $(OBJ)
 	rm -f $(ASM)
 	rm -f $(EXEC)
 	rm -f $(NAME)
 	rm -f $(NAME)-debug
 
 install: $(INSTALL_TARGETS)
+	$(MAKE) -C include install
 
 uninstall:
+	$(MAKE) -C include uninstall
 	rm -f $(INSTALL_TARGETS)
