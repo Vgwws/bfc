@@ -10,7 +10,7 @@ TEST_INPUT ?= Hello
 	@echo "Test $< Executable"
 	@echo "-------------------------------------"
 	cat $<
-	./$(NAME)-$(PREFIX_DEBUG)-debug -c "$(CC)" -t $(ARCH) -o $@ $<
+	./$(NAME)$(PREFIX_DEBUG)-debug -c "$(CC)" -t $(ARCH) -o $@ $<
 	echo "$(TEST_INPUT)" | $(EMULATOR) ./$@
 	@echo ""
 	rm $@
@@ -20,7 +20,7 @@ TEST_INPUT ?= Hello
 	@echo "Test $< Assembly"
 	@echo "-------------------------------------"
 	cat $<
-	./$(NAME)-$(PREFIX_DEBUG)-debug -t $(ARCH) -S $@ $<
+	./$(NAME)$(PREFIX_DEBUG)-debug -t $(ARCH) -S $@ $<
 	cat $@
 	rm $@
 	@echo "-------------------------------------\n"

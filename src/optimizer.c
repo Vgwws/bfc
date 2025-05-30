@@ -1,3 +1,10 @@
+/*
+ * SPDX-License-Identifier: MIT
+ * Copyright (C) 2025 Vgwws
+ *
+ * This file is licensed under MIT. See LICENSE for details.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
