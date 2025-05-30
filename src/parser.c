@@ -56,6 +56,7 @@ AST* parse_commands(Parser* parser, const Token* tokens){
 	ast->capacity = CHILDS_SIZE;
 	ast->child_count = 0;
 	ast->num = 0;
+	ast->node.count = 0;
 	while(parser->current_token.type != TOKEN_EOF &&
 			parser->current_token.type != TOKEN_CLOSE_LOOP){
 		ast->child_count++;

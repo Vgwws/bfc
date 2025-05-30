@@ -29,7 +29,7 @@ test-exec: all
 	@$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT="$(TEST_INPUT)" EMULATOR="$(EMULATOR)" test-exec
 
 test-asm: all
-	@$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT="$(TEST_INPUT)" EMULATOR="$(EMULATOR)" test-asm
+	@$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) test-asm
 
 test-all: all
 	@$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT="$(TEST_INPUT)" EMULATOR="$(EMULATOR)" test-all
