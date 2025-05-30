@@ -15,10 +15,10 @@ BINDIR            := $(PREFIX)/bin
 INSTALL_TARGETS   := $(BINDIR)/$(NAME)
 
 all:
-	$(MAKE) -C src all
+	@$(MAKE) -C src all
 
 asan-debug:
-	$(MAKE) -C src asan-debug
+	@$(MAKE) -C src asan-debug
 
 $(BINDIR)/$(NAME): $(NAME)
 	@mkdir -p $(dir $@)
@@ -26,23 +26,20 @@ $(BINDIR)/$(NAME): $(NAME)
 	chmod 755 $@
 
 test-exec: all
-	$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT="$(TEST_INPUT)" EMULATOR="$(EMULATOR)" test-exec
+	@$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT="$(TEST_INPUT)" EMULATOR="$(EMULATOR)" test-exec
 
 test-asm: all
-	$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT="$(TEST_INPUT)" EMULATOR="$(EMULATOR)" test-asm
+	@$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT="$(TEST_INPUT)" EMULATOR="$(EMULATOR)" test-asm
 
 test-all: all
-	$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT="$(TEST_INPUT)" EMULATOR="$(EMULATOR)" test-all
+	@$(MAKE) -C test NAME=../$(NAME) ARCH=$(ARCH) CC=$(CC) TEST_INPUT="$(TEST_INPUT)" EMULATOR="$(EMULATOR)" test-all
 
 clean:
-	rm -f $(ASM)
-	rm -f $(EXEC)
-	rm -f $(NAME)
-	rm -f $(NAME)-debug
+	@$(MAKE) -C src clean
 
 install: $(INSTALL_TARGETS)
-	$(MAKE) -C include install
+	@$(MAKE) -C include install
 
 uninstall:
-	$(MAKE) -C include uninstall
+	@$(MAKE) -C include uninstall
 	rm -f $(INSTALL_TARGETS)

@@ -1,4 +1,4 @@
-.PHONY: all asan-debug
+.PHONY: all asan-debug clean
 
 NAME := bfc
 PROGRAM_STD := ../$(NAME)
@@ -15,6 +15,14 @@ ASAN_DEBUG_OBJ := $(C_SRC:%.c=../build/%-asan-debug.o)
 all: $(PROGRAM_STD) $(PROGRAM_DEBUG)
 
 asan-debug: $(PROGRAM_ASAN_DEBUG)
+
+clean:
+	rm -f $(PROGRAM_STD)
+	rm -f $(PROGRAM_DEBUG)
+	rm -f $(PROGRAM_ASAN_DEBUG)
+	rm -f $(STD_OBJ)
+	rm -f $(DEBUG_OBJ)
+	rm -f $(ASAN_DEBUG_OBJ)
 
 ../build/%.o: %.c
 	@mkdir -p ../build

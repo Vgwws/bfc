@@ -190,16 +190,18 @@ void generate_mul(AST* ast, Context context){
 			fprintf(context.output,
 					"movl %%r11, %%r12\n"
 					"%s $%d, %%r12\n"
-					"mulb $%d, (%%r10, %%r12)\n",
-					move, ast->node.count, ast->num
+					"movb $%d, %%al\n"
+					"mulb %%al, (%%r10, %%r12)\n",
+					move, ast->num, ast->node.count
 					);
 			break;
 		case i386:
 			fprintf(context.output,
 					"movl %%ebx, %%ecx\n"
 					"%s $%d, %%ecx\n"
-					"mulb $%d, (%%eax, %%ecx)\n",
-					move, ast->node.count, ast->num
+					"movb $%d, %%al\n"
+					"mulb %%al, (%%eax, %%ecx)\n",
+					move, ast->num, ast->node.count
 					);
 			break;
 		default:
