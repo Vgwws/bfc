@@ -134,6 +134,7 @@ int main(int argc, char** argv){
 		tokens[i].count = lexer->token.count;
 		i++;
 	}while(lexer->token.type != TOKEN_EOF);
+	free(source);
 	Parser* parser = parser_init(tokens);
 	AST* ast = parse_program(parser, tokens);
 	if(parser->error_flag){

@@ -15,7 +15,11 @@ BINDIR            := $(PREFIX)/bin
 INSTALL_TARGETS   := $(BINDIR)/$(NAME)
 
 all:
-	@$(MAKE) -C src all
+	if [ "$(PREFIX_DEBUG)" = "asan" ]; then \
+		$(MAKE) -C src asan-debug; \
+	else \
+	  $(MAKE) -C src all; \
+	fi
 
 asan-debug:
 	@$(MAKE) -C src asan-debug
