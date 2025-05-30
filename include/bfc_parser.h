@@ -24,8 +24,8 @@ typedef struct {
 
 typedef struct AST {
 	ASTNode node;
-	unsigned int num;
 	struct AST** child_nodes;
+	unsigned int num;
 	unsigned int child_count;
 	unsigned int capacity;
 } AST;
