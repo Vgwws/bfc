@@ -190,8 +190,8 @@ void generate_mul(AST* ast, Context context){
 			fprintf(context.output,
 					"mov %%r11, %%r12\n"
 					"%s $%d, %%r12\n"
-					"movzxl (%%r10, %%r11), %%r13\n"
-					"imul $%d, %%r13, %%eax\n"
+					"movzbl (%%r10, %%r11), %%eax\n"
+					"imul $%d, %%eax, %%eax\n"
 					"movb %%al, (%%r10, %%r12)\n",
 					move, ast->num, ast->node.count
 					);
@@ -200,7 +200,7 @@ void generate_mul(AST* ast, Context context){
 			fprintf(context.output,
 					"mov %%ebx, %%ecx\n"
 					"%s $%d, %%ecx\n"
-					"movzxl (%%eax, %%ebx), %%edx\n"
+					"movzbl (%%eax, %%ebx), %%edx\n"
 					"imul $%d, %%edx, %%edx\n"
 					"movb %%dl, (%%eax, %%ecx)\n",
 					move, ast->num, ast->node.count
