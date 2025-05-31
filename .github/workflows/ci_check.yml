@@ -48,7 +48,7 @@ jobs:
         sudo dpkg --add-architecture aarch64
         sudo apt update
         sudo apt install -y gcc-aarch64-linux-gnu \
-                            libc6:arm64
+                            libc6-dev:arm64
 
     - name: Setup AArch32 Environment Testing
       if: matrix.arch == 'aarch32'
