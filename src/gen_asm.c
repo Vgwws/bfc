@@ -191,7 +191,7 @@ void generate_mul(AST* ast, Context context){
 					"mov %%r11, %%r12\n"
 					"%s $%d, %%r12\n"
 					"movb $%d, %%al\n"
-					"movxzb (%%r10, %%r11), %%bl\n"
+					"movzxb (%%r10, %%r11), %%bl\n"
 					"mulb %%bl\n"
 					"movb %%al, (%%r10, %%r12)\n",
 					move, ast->num, ast->node.count
@@ -202,7 +202,7 @@ void generate_mul(AST* ast, Context context){
 					"mov %%ebx, %%ecx\n"
 					"%s $%d, %%ecx\n"
 					"movb $%d, %%al\n"
-					"movxzb (%%eax, %%ebx), %%bl\n"
+					"movzxb (%%eax, %%ebx), %%bl\n"
 					"mulb %%bl\n"
 					"movb %%al, (%%eax, %%ecx)\n",
 					move, ast->num, ast->node.count
