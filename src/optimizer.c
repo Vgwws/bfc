@@ -30,7 +30,7 @@ void to_mul(AST** ast_ptr){
 	if((ast_mul[1]->node.type == AST_PTR_INC && ast_mul[3]->node.type != AST_PTR_DEC) || 
 			(ast_mul[1]->node.type == AST_PTR_DEC && ast_mul[3]->node.type != AST_PTR_INC))
 		return;
-	AST* new_ast = malloc(sizeof(AST));
+	AST* new_ast = calloc(1, sizeof(AST));
 	if(!new_ast){
 		fprintf(stderr, "ERROR: Memory allocation for ast failed\n");
 		error_flag = 1;
@@ -39,6 +39,9 @@ void to_mul(AST** ast_ptr){
 	new_ast->node.type = ast_mul[1]->node.type == AST_PTR_INC ? AST_MUL_INC : AST_MUL_DEC;
 	new_ast->node.count = ast_mul[2]->node.count;
 	new_ast->num = ast_mul[1]->node.count;
+	new_ast->child_nodes = NULL;
+	new_ast->capacity = 0;
+	new_ast->child_count = 0;
 	clean_ast(ast);
 	*ast_ptr = new_ast;
 }

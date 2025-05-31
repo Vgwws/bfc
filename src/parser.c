@@ -40,13 +40,13 @@ AST* parse_program(Parser* parser, const Token* tokens){
 }
 
 AST* parse_commands(Parser* parser, const Token* tokens){
-	AST* ast = malloc(sizeof(AST));
+	AST* ast = calloc(1, sizeof(AST));
 	if(!ast){
 		fprintf(stderr, "ERROR: Memory allocation for ast failed\n");
 		parser->error_flag = 1;
 		return NULL;
 	}
-	ast->child_nodes = malloc(CHILDS_SIZE * sizeof(AST*));
+	ast->child_nodes = calloc(CHILDS_SIZE, sizeof(AST*));
 	if(!ast->child_nodes){
 		fprintf(stderr, "ERROR: Memory allocation for ast failed\n");
 		parser->error_flag = 1;
@@ -54,8 +54,6 @@ AST* parse_commands(Parser* parser, const Token* tokens){
 		return NULL;
 	}
 	ast->capacity = CHILDS_SIZE;
-	ast->child_count = 0;
-	ast->node.count = 0;
 	while(parser->current_token.type != TOKEN_EOF &&
 			parser->current_token.type != TOKEN_CLOSE_LOOP){
 		ast->child_count++;
@@ -94,17 +92,12 @@ AST* parse_command(Parser* parser, const Token* tokens){
 		ast->node.type = AST_LOOP;
 		return ast;
 	}
-	AST* ast = malloc(sizeof(AST));
+	AST* ast = calloc(1, sizeof(AST));
 	if(!ast){
 		fprintf(stderr, "ERROR: Memory allocation for ast failed\n");
 		parser->error_flag = 1;
 		return NULL;
 	}
-	ast->node.count = 0;
-	ast->child_count = 0;
-	ast->capacity = 0;
-	ast->num = 0;
-	ast->child_nodes = NULL;
 	switch(parser->current_token.type){
 		case TOKEN_VAL_INC:
 			ast->node.type = AST_VAL_INC;
@@ -126,6 +119,7 @@ AST* parse_command(Parser* parser, const Token* tokens){
 			break;
 		default:
 			free(ast);
+			parser->current_token = tokens[++parser->index];
 			return NULL;
 	}
 	ast->node.count = parser->current_token.count;
