@@ -129,8 +129,8 @@ void generate_loop(AST* ast, Context context){
 		case i386:
 			fprintf(context.output,
 					"loop%d_start:\n"
-					"movzbl (%%eax, %%ebx), %%ecx\n"
-					"test %%ecx, %%ecx\n"
+					"movzbl (%%ebx, %%ecx), %%edx\n"
+					"test %%edx, %%edx\n"
 					"jz loop%d_end\n",
 					depth, depth
 					);
@@ -190,9 +190,8 @@ void generate_mul(AST* ast, Context context){
 			fprintf(context.output,
 					"mov %%r11, %%r12\n"
 					"%s $%d, %%r12\n"
-					"movb $%d, %%al\n"
-					"movzxb (%%r10, %%r11), %%bl\n"
-					"mulb %%bl\n"
+					"movzxl (%%r10, %%r11), %%r13\n"
+					"imul $%d, %%r13, %%eax\n"
 					"movb %%al, (%%r10, %%r12)\n",
 					move, ast->num, ast->node.count
 					);
@@ -201,10 +200,9 @@ void generate_mul(AST* ast, Context context){
 			fprintf(context.output,
 					"mov %%ebx, %%ecx\n"
 					"%s $%d, %%ecx\n"
-					"movb $%d, %%al\n"
-					"movzxb (%%eax, %%ebx), %%bl\n"
-					"mulb %%bl\n"
-					"movb %%al, (%%eax, %%ecx)\n",
+					"movzxl (%%eax, %%ebx), %%edx\n"
+					"imul $%d, %%edx, %%edx\n"
+					"movb %%dl, (%%eax, %%ecx)\n",
 					move, ast->num, ast->node.count
 					);
 			break;
