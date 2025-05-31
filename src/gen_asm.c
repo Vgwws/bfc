@@ -129,8 +129,8 @@ void generate_loop(AST* ast, Context context){
 		case i386:
 			fprintf(context.output,
 					"loop%d_start:\n"
-					"movzbl (%%ebx, %%ecx), %%edx\n"
-					"test %%edx, %%edx\n"
+					"movzbl (%%eax, %%ebx), %%ecx\n"
+					"test %%ecx, %%ecx\n"
 					"jz loop%d_end\n",
 					depth, depth
 					);
