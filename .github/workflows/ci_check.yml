@@ -45,7 +45,7 @@ jobs:
     - name: Setup AArch64 Environment Testing
       if: matrix.arch == 'aarch64'
       run: |
-        sudo dpkg --add-architecture arm64
+        sudo dpkg --add-architecture aarch64
         sudo apt update
         sudo apt install -y gcc-aarch64-linux-gnu
 
