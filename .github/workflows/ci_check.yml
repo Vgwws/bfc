@@ -53,10 +53,10 @@ jobs:
     - name: Setup AArch32 Environment Testing
       if: matrix.arch == 'aarch32'
       run: |
-        sudo dpkg --add-architecture arm32
+        sudo dpkg --add-architecture armhf
         sudo apt update
         sudo apt install -y gcc-arm-linux-gnueabihf \
-                            libc6:arm32
+                            libc6:armhf
 
     - name: Setup i386 Environment Testing
       if: matrix.arch == 'i386'
