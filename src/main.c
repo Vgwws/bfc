@@ -165,7 +165,7 @@ int main(int argc, char** argv){
 		return 1;
 	}
 	else if(pid == 0){
-		execlp(cc, cc, "-nostdlib", "-o", output, assembly_output, NULL);
+		execlp(cc, cc, "-static", "-nostdlib", "-o", output, assembly_output, NULL);
 		fprintf(stderr, "ERROR: Can't run subprocess\n");
 		clean_up(ast, parser, tokens, lexer);
 		return 1;
