@@ -193,7 +193,7 @@ void generate_mul(AST* ast, Context context){
 					"movb $%d, %%al\n"
 					"movxzb (%%r10, %%r11), %%bl\n"
 					"mulb %%bl\n"
-					"movb %%al, (%%r10, %%r12)\n"
+					"movb %%al, (%%r10, %%r12)\n",
 					move, ast->num, ast->node.count
 					);
 			break;
