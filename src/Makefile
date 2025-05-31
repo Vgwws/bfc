@@ -37,11 +37,11 @@ clean:
 	clang -fsanitize=address -c -g $(CFLAGS) -O0 $< -o $@
 
 $(PROGRAM_STD): $(STD_OBJ)
-	gcc -static $^ -o $@
+	gcc $(STATIC) $^ -o $@
 	@strip $@
 
 $(PROGRAM_DEBUG): $(DEBUG_OBJ)
-	gcc -static -g $^ -o $@
+	gcc $(STATIC) -g $^ -o $@
 
 $(PROGRAM_ASAN_DEBUG): $(ASAN_DEBUG_OBJ)
 	clang -fsanitize=address -g $^ -o $@
