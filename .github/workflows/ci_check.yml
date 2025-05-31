@@ -47,6 +47,7 @@ jobs:
       run: |
         sudo dpkg --add-architecture aarch64
         sudo apt update
+        sudo dpkg --print-architecture
         sudo apt install -y gcc-aarch64-linux-gnu \
                             libc6-dev:arm64
 
