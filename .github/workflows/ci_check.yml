@@ -44,28 +44,15 @@ jobs:
 
     - name: Setup AArch64 Environment Testing
       if: matrix.arch == 'aarch64'
-      run: |
-        sudo dpkg --add-architecture aarch64
-        sudo apt update
-        sudo dpkg --print-architecture
-        sudo apt install -y gcc-aarch64-linux-gnu \
-                            libc6-dev:arm64
+      run: sudo apt install -y gcc-aarch64-linux-gnu
 
     - name: Setup AArch32 Environment Testing
       if: matrix.arch == 'aarch32'
-      run: |
-        sudo dpkg --add-architecture armhf
-        sudo apt update
-        sudo apt install -y gcc-arm-linux-gnueabihf \
-                            libc6-dev:armhf
+      run: sudo apt install -y gcc-arm-linux-gnueabihf
 
     - name: Setup i386 Environment Testing
       if: matrix.arch == 'i386'
-      run: |
-        sudo dpkg --add-architecture i386
-        sudo apt update
-        sudo apt install -y gcc-i686-linux-gnu \
-                            libc6-dev:i386
+      run: sudo apt install -y gcc-i686-linux-gnu
 
     - name: Test all
       run: make ARCH=${{ matrix.arch}} CC=${{ matrix.cc }} EMULATOR="${{ matrix.emulator }}" TEST_INPUT="${{ matrix.test_input }}" PREFIX_DEBUG=-asan test-all
