@@ -48,7 +48,6 @@ make uninstall
                 (e.g., AArch64, x86_64)
 
 \-c [PROGRAM]  : Set assembler and linker of Assembly to [PROGRAM]
-
                 (e.g., gcc, clang)
 
 \-h            : Print this help

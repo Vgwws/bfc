@@ -211,6 +211,35 @@ void generate_mul(AST* ast, Context context){
 	}
 }
 
+void generate_zero(Context context){
+	switch(context.arch){
+		case aarch64:
+			fprintf(context.output,
+					"mov w0, 0\n"
+					"strb w0, [x3, x4]\n"
+					);
+			break;
+		case aarch32:
+			fprintf(context.output,
+					"mov r0, #0\n"
+					"strb r0, [r3, r4]\n"
+					);
+			break;
+		case x86_64:
+			fprintf(context.output,
+					"movb $0, (%%r10, %%r11)\n"
+					);
+			break;
+		case i386:
+			fprintf(context.output,
+					"movb $0, (%%eax, %%ebx)\n"
+					);
+			break;
+		default:
+			break;
+	}
+}
+
 void generate_output(Context context){
 	switch(context.arch){
 		case aarch64:
@@ -474,6 +503,9 @@ void generate_asm(AST* ast, Context context){
 		case AST_MUL_INC:
 		case AST_MUL_DEC:
 			generate_mul(ast, context);
+			break;
+		case AST_ZERO:
+			generate_zero(context);
 			break;
 		default:
 			break;
