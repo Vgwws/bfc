@@ -44,4 +44,4 @@ $(PROGRAM_DEBUG): $(DEBUG_OBJ)
 	gcc -static -g $^ -o $@
 
 $(PROGRAM_ASAN_DEBUG): $(ASAN_DEBUG_OBJ)
-	clang -static -fsanitize=address -g $^ -o $@
+	clang -fsanitize=address -g $^ -o $@
