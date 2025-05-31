@@ -47,22 +47,24 @@ jobs:
       run: |
         sudo dpkg --add-architecture aarch64
         sudo apt update
-        sudo apt install libc:arm64
-        sudo apt install -y gcc-aarch64-linux-gnu
+        sudo apt install -y gcc-aarch64-linux-gnu \
+                            libc6:arm64
 
     - name: Setup AArch32 Environment Testing
       if: matrix.arch == 'aarch32'
       run: |
         sudo dpkg --add-architecture arm32
         sudo apt update
-        sudo apt install -y gcc-arm-linux-gnueabihf
+        sudo apt install -y gcc-arm-linux-gnueabihf \
+                            libc6:arm32
 
     - name: Setup i386 Environment Testing
       if: matrix.arch == 'i386'
       run: |
         sudo dpkg --add-architecture amd32
         sudo apt update
-        sudo apt install -y gcc-i686-linux-gnu
+        sudo apt install -y gcc-i686-linux-gnu \
+                            libc6:amd32
 
     - name: Test all
       run: make ARCH=${{ matrix.arch}} CC=${{ matrix.cc }} EMULATOR="${{ matrix.emulator }}" TEST_INPUT="${{ matrix.test_input }}" PREFIX_DEBUG=-asan test-all
