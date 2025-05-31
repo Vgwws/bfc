@@ -14,14 +14,8 @@ BINDIR            := $(PREFIX)/bin
 
 INSTALL_TARGETS   := $(BINDIR)/$(NAME)
 
-ifeq ($(STATIC),no)
-	STATIC_FLAG :=
-else
-	STATIC_FLAG := -static
-endif
-
 all:
-	@$(MAKE) -C src STATIC=$(STATIC_FLAG) all
+	@$(MAKE) -C src all
 
 asan-debug:
 	@$(MAKE) -C src asan-debug
