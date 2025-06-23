@@ -19,7 +19,7 @@ void to_mul(AST** ast_ptr){
 	AST** ast_mul = ast->child_nodes;
 	if(ast->child_count != 4)
 		return;
-	if(ast_mul[0]->node.type != AST_VAL_DEC && ast_mul[0]->node.count > 1)
+	if((ast_mul[0]->node.type != AST_VAL_DEC || ast_mul[3]->node.type != AST_VAL_DEC)  && (ast_mul[0]->node.count > 1 || ast_mul[3]->node.count > 1))
 		return;
 	if(ast_mul[1]->node.type != AST_PTR_INC && ast_mul[1]->node.type != AST_PTR_DEC)
 		return;
@@ -38,8 +38,6 @@ void to_mul(AST** ast_ptr){
 	new_ast->node.count = ast_mul[2]->node.count;
 	new_ast->num = ast_mul[1]->node.count;
 	new_ast->child_nodes = NULL;
-	new_ast->capacity = 0;
-	new_ast->child_count = 0;
 	clean_ast(ast);
 	*ast_ptr = new_ast;
 }
@@ -72,6 +70,9 @@ int optimize_ast(AST* ast){
 		to_zero(&ast->child_nodes[i]);
 		if(error_flag)
 			return 1;
+		if(ast->child_nodes[i]->node.type == AST_LOOP)
+			if(optimize_ast(ast->child_nodes[i]))
+				return 1;	
 	}
 	return 0;
 }

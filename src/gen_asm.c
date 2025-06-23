@@ -163,54 +163,6 @@ void generate_loop(AST* ast, Context context){
 	}
 }
 
-void generate_mul(AST* ast, Context context){
-	const char* move = ast->node.type == AST_MUL_INC ? "add" : "sub";
-	switch(context.arch){
-		case aarch64:
-			fprintf(context.output,
-					"mov w1, %d\n"
-					"ldrb w0, [x3, x4]\n"
-					"mul w0, w0, w1\n"
-					"%s x5, x4, %d\n"
-					"strb w0, [x3, x5]\n",
-					ast->node.count, move, ast->num
-					);
-			break;
-		case aarch32:
-			fprintf(context.output,
-					"mov r1, #%d\n"
-					"ldrb r0, [r3, r4]\n"
-					"mul r0, r0, r1\n"
-					"%s r5, r4, #%d\n"
-					"strb r0, [r3, r5]\n",
-					ast->node.count, move, ast->num
-					);
-			break;
-		case x86_64:
-			fprintf(context.output,
-					"mov %%r11, %%r12\n"
-					"%s $%d, %%r12\n"
-					"movzbl (%%r10, %%r11), %%eax\n"
-					"imul $%d, %%eax, %%eax\n"
-					"movb %%al, (%%r10, %%r12)\n",
-					move, ast->num, ast->node.count
-					);
-			break;
-		case i386:
-			fprintf(context.output,
-					"mov %%ebx, %%ecx\n"
-					"%s $%d, %%ecx\n"
-					"movzbl (%%eax, %%ebx), %%edx\n"
-					"imul $%d, %%edx, %%edx\n"
-					"movb %%dl, (%%eax, %%ecx)\n",
-					move, ast->num, ast->node.count
-					);
-			break;
-		default:
-			break;
-	}
-}
-
 void generate_zero(Context context){
 	switch(context.arch){
 		case aarch64:
@@ -240,15 +192,71 @@ void generate_zero(Context context){
 	}
 }
 
-void generate_output(Context context){
+
+void generate_mul(AST* ast, Context context){
+	const char* move = ast->node.type == AST_MUL_INC ? "add" : "sub";
+	switch(context.arch){
+		case aarch64:
+			fprintf(context.output,
+					"mov w1, %d\n"
+					"ldrb w0, [x3, x4]\n"
+					"mul w0, w0, w1\n"
+					"%s x5, x4, %d\n"
+					"strb w0, [x3, x5]\n"
+					"mov w0, 0\n"
+					"strb w0, [x3, x4]\n",
+					ast->node.count, move, ast->num
+					);
+			break;
+		case aarch32:
+			fprintf(context.output,
+					"mov r1, #%d\n"
+					"ldrb r0, [r3, r4]\n"
+					"mul r0, r0, r1\n"
+					"%s r5, r4, #%d\n"
+					"strb r0, [r3, r5]\n"
+					"mov r0, #0\n"
+					"strb r0, [r3, r4]\n",
+					ast->node.count, move, ast->num
+					);
+			break;
+		case x86_64:
+			fprintf(context.output,
+					"mov %%r11, %%r12\n"
+					"%s $%d, %%r12\n"
+					"movzbl (%%r10, %%r11), %%eax\n"
+					"imul $%d, %%eax, %%eax\n"
+					"movb %%al, (%%r10, %%r12)\n"
+					"movb $0, (%%r10, %%r11)\n",
+					move, ast->num, ast->node.count
+					);
+			break;
+		case i386:
+			fprintf(context.output,
+					"mov %%ebx, %%ecx\n"
+					"%s $%d, %%ecx\n"
+					"movzbl (%%eax, %%ebx), %%edx\n"
+					"imul $%d, %%edx, %%edx\n"
+					"movb %%dl, (%%eax, %%ecx)\n"
+					"movb $0, (%%eax, %%ebx)\n",
+					move, ast->num, ast->node.count
+					);
+			break;
+		default:
+			break;
+	}
+}
+
+void generate_output(AST* ast, Context context){
 	switch(context.arch){
 		case aarch64:
 			fprintf(context.output,
 					"mov x8, 64\n"
 					"mov x0, 1\n"
 					"add x1, x3, x4\n"
-					"mov x2, 1\n"
-					"svc 0\n"
+					"mov x2, %d\n"
+					"svc 0\n",
+					ast->node.count
 					);
 			break;
 		case aarch32:
@@ -256,8 +264,9 @@ void generate_output(Context context){
 					"mov r7, #4\n"
 					"mov r0, #1\n"
 					"add r1, r3, r4\n"
-					"mov r2, #1\n"
-					"svc #0\n"
+					"mov r2, #%d\n"
+					"svc #0\n",
+					ast->node.count
 					);
 			break;
 		case x86_64:
@@ -267,9 +276,10 @@ void generate_output(Context context){
 					"mov $1, %%rdi\n"
 					"lea arr(%%rip), %%rsi\n"
 					"add %%r11, %%rsi\n"
-					"mov $1, %%rdx\n"
+					"mov $%d, %%rdx\n"
 					"syscall\n"
-					"pop %%r11\n"
+					"pop %%r11\n",
+					ast->node.count
 					);
 			break;
 		case i386:
@@ -279,10 +289,11 @@ void generate_output(Context context){
 					"leal (%%eax, %%ebx), %%ecx\n"
 					"movl $4, %%eax\n"
 					"movl $1, %%ebx\n"
-					"movl $1, %%edx\n"
+					"movl $%d, %%edx\n"
 					"int $0x80\n"
 					"popl %%ebx\n"
-					"popl %%eax\n"
+					"popl %%eax\n",
+					ast->node.count
 					);
 			break;
 		default:
@@ -290,15 +301,16 @@ void generate_output(Context context){
 	}
 }
 
-void generate_input(Context context){
+void generate_input(AST* ast, Context context){
 	switch(context.arch){
 		case aarch64:
 			fprintf(context.output,
 					"mov x8, 63\n"
 					"mov x0, 0\n"
 					"add x1, x3, x4\n"
-					"mov x2, 1\n"
-					"svc 0\n"
+					"mov x2, %d\n"
+					"svc 0\n",
+					ast->node.count
 					);
 			break;
 		case aarch32:
@@ -306,8 +318,9 @@ void generate_input(Context context){
 					"mov r7, #3\n"
 					"mov r0, #0\n"
 					"add r1, r3, r4\n"
-					"mov r2, #1\n"
-					"svc #0\n"
+					"mov r2, #%d\n"
+					"svc #0\n",
+					ast->node.count
 					);
 			break;
 		case x86_64:
@@ -317,9 +330,10 @@ void generate_input(Context context){
 					"mov $0, %%rdi\n"
 					"lea arr(%%rip), %%rsi\n"
 					"add %%r11, %%rsi\n"
-					"mov $1, %%rdx\n"
+					"mov $%d, %%rdx\n"
 					"syscall\n"
-					"pop %%r11\n"
+					"pop %%r11\n",
+					ast->node.count
 					);
 			break;
 		case i386:
@@ -329,10 +343,11 @@ void generate_input(Context context){
 					"leal (%%eax, %%ebx), %%ecx\n"
 					"movl $3, %%eax\n"
 					"movl $0, %%ebx\n"
-					"movl $1, %%edx\n"
+					"movl $%d, %%edx\n"
 					"int $0x80\n"
 					"popl %%ebx\n"
-					"popl %%eax\n"
+					"popl %%eax\n",
+					ast->node.count
 					);
 			break;
 		default:
@@ -495,10 +510,10 @@ void generate_asm(AST* ast, Context context){
 			generate_val_dec(ast, context);
 			break;
 		case AST_INPUT:
-			generate_input(context);
+			generate_input(ast, context);
 			break;
 		case AST_OUTPUT:
-			generate_output(context);
+			generate_output(ast, context);
 			break;
 		case AST_MUL_INC:
 		case AST_MUL_DEC:

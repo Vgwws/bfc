@@ -132,6 +132,7 @@ int main(int argc, char** argv){
 		lexer_advance(lexer, source);
 		tokens[i].type = lexer->token.type;
 		tokens[i].count = lexer->token.count;
+		lexer->token.count = 0;
 		i++;
 	}while(lexer->token.type != TOKEN_EOF);
 	free(source);

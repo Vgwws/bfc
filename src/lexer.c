@@ -14,6 +14,7 @@ Lexer* lexer_init(const char* source){
 	Lexer* lexer = malloc(sizeof(Lexer));
 	lexer->index = 0;
 	lexer->current_char = source[0];
+	lexer->token.count = 0;
 	return lexer;
 }
 
@@ -24,10 +25,10 @@ void lexer_advance(Lexer* lexer, const char* source){
 		lexer->token.count = 1;
 		return;
 	}
-	lexer->token.count = 0;
 	int net = 0;
 	short is_ptr_op = 0;
 	short is_val_op = 0;
+	short is_output_input = 0;
 	char f_op = 0;
 	char s_op = 0;
 	if(ch == '+' || ch == '-'){
@@ -40,19 +41,34 @@ void lexer_advance(Lexer* lexer, const char* source){
 		f_op = '>';
 		s_op = '<';
 	}
+	else if(ch == '.' || ch == ','){
+		is_output_input = 1;
+		f_op = '.';
+		s_op = ',';
+	}
 	while((lexer->current_char == f_op || lexer->current_char == s_op) &&
-			(is_val_op || is_ptr_op)){
-		if(lexer->current_char == '+' || lexer->current_char == '>'){
+			(is_val_op || is_ptr_op || is_output_input)){
+		if(lexer->current_char == '.' || lexer->current_char == ',')
 			net++;
+		if((lexer->current_char == '.' || lexer->current_char == ',') && source[lexer->index + 1] != '>'){
+			lexer->current_char = source[++lexer->index];
+			break;
 		}
-		else{
+		if(lexer->current_char == '+' || lexer->current_char == '>')
+			net++;
+		else if(lexer->current_char == '-' || lexer->current_char == '<')
 			net--;
-		}
 		lexer->current_char = source[++lexer->index];
 	}
-	int is_valid_token = 1;
-	if(is_ptr_op || is_val_op){
-		if(net < 0){
+	if(is_ptr_op || is_val_op || is_output_input){
+		if(is_output_input){
+			lexer->token.count = net;
+			if(ch == '.')
+				lexer->token.type = TOKEN_OUTPUT;
+			else
+				lexer->token.type = TOKEN_INPUT;
+		}
+		else if(net < 0){
 			lexer->token.count = -net;
 			if(is_ptr_op){
 				lexer->token.type = TOKEN_PTR_DEC;
@@ -70,9 +86,8 @@ void lexer_advance(Lexer* lexer, const char* source){
 				lexer->token.type = TOKEN_VAL_INC;
 			}
 		}
-		else{
+		if(!net)
 			lexer_advance(lexer, source);
-		}
 		return;
 	}
 	lexer->current_char = source[++lexer->index];
@@ -90,10 +105,7 @@ void lexer_advance(Lexer* lexer, const char* source){
 			lexer->token.type = TOKEN_CLOSE_LOOP;
 			break;
 		default:
-			is_valid_token = 0;
+			lexer_advance(lexer, source);
 			break;
-	}
-	if(!is_valid_token){
-		lexer_advance(lexer, source);
 	}
 }
